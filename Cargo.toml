@@ -1,0 +1,8 @@
+[package]
+name = "rustinvoice"
+version = "0.1.0"
+authors = ["timglabisch <tim@ainfach.de>"]
+
+[dependencies]
+nickel = "0.7.3"
+rustc-serialize = "0.3"
