@@ -15,7 +15,10 @@ export default Reflux.createStore({
 
       $.ajax({
         url: "/customers",
-        method: 'POST'
+        method: 'POST',
+        dataType: 'json',
+        data: JSON.stringify(c),
+        contentType: 'application/json; charset=utf-8',
       }).done(function() {
         Action.created_customer("yeahhh");
       }).fail(function() {
