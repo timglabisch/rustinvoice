@@ -1,14 +1,14 @@
 use super::address::Address;
 
-#[derive(RustcDecodable, RustcEncodable)]
+#[derive(RustcDecodable, RustcEncodable, Debug)]
 pub struct Customer {
-    invoice_address : Address,
+    address : Address,
 }
 
 impl Customer {
     pub fn new() -> Self {
         Customer {
-            invoice_address: Address::default()
+            address: Address::default()
         }
     }
 }

@@ -1,4 +1,4 @@
-#[derive(RustcDecodable, RustcEncodable, Default)]
+#[derive(RustcDecodable, RustcEncodable, Default, Debug)]
 pub struct Address {
     country : String,
     street : String,

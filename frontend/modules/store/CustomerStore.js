@@ -14,7 +14,7 @@ export default Reflux.createStore({
       console.log(c);
 
       $.ajax({
-        url: "/customers",
+        url: "http://127.0.0.1:6767/customers",
         method: 'POST',
         dataType: 'json',
         data: JSON.stringify(c),
