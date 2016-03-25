@@ -7,10 +7,11 @@ import { Router, Route, hashHistory, Link } from 'react-router'
 
 render((
   <div>
-    <Router history={hashHistory}>
-      <Route path="/" component={App}/>
-      <Route path="/customers" component={Customers}/>
-      <Route path="/customer" component={Customer}/>
-    </Router>
+     <Router history={hashHistory}>
+       <Route path="/" component={App}>
+         <Route path="/customers" component={Customers}/>
+         <Route path="/customer" component={Customer}/>
+       </Route>
+     </Router>
   </div>
 ), document.getElementById('app'))

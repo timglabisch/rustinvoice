@@ -7,6 +7,11 @@ export default Reflux.createStore({
     init: function() {
         console.log('listen')
         this.listenTo(Action.on, this.output);
+        this.listenTo(Action.create_customer, this.create_customer)
+    },
+
+    create_customer: function(c) {
+      console.log(c);
     },
 
     output: function(flag) {
