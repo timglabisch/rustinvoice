@@ -2,6 +2,8 @@ import React from 'react'
 import Navigation from './layout/Navigation'
 import Customer from './dto/Customer'
 
+import Action from './action/Action'
+
 export default React.createClass({
 
   getInitialState() {
@@ -10,6 +12,8 @@ export default React.createClass({
 
   handleAddressChange: function(field, e) {
     this.state.customer.address[field] = e.target.value;
+
+    Action.on();
 
     this.setState(this.state);
   },
