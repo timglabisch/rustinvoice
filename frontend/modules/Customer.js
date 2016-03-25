@@ -1,12 +1,24 @@
 import React from 'react'
 import Customer from './dto/Customer'
-
+import CustomerStore from './store/CustomerStore'
 import Action from './action/Action'
 
 export default React.createClass({
 
   getInitialState() {
      return { customer: new Customer() };
+  },
+
+  componentDidMount: function() {
+    this.unsubscribe = CustomerStore.listen(this.onStatusChange);
+  },
+
+  componentWillUnmount: function() {
+    this.unsubscribe();
+  },
+
+  onStatusChange: function() {
+    console.log("yepp");
   },
 
   handleAddressChange(field, e) {
@@ -25,9 +37,20 @@ export default React.createClass({
     return <div>
             <div>
               <form>
+
                 <div className="form-group">
-                  <label>Land</label>
-                  <input type="text" className="form-control" value={this.state.customer.address.country} onChange={this.handleAddressChange.bind(this, 'country')} />
+                  <label>Vorname</label>
+                  <input type="text" className="form-control" value={this.state.customer.address.first_name} onChange={this.handleAddressChange.bind(this, 'first_name')} />
+                </div>
+
+                <div className="form-group">
+                  <label>Nachname</label>
+                  <input type="text" className="form-control" value={this.state.customer.address.last_name} onChange={this.handleAddressChange.bind(this, 'last_name')} />
+                </div>
+
+                <div className="form-group">
+                  <label>Firma</label>
+                  <input type="text" className="form-control" value={this.state.customer.address.company_name} onChange={this.handleAddressChange.bind(this, 'company_name')} />
                 </div>
 
                 <div className="form-group">
@@ -46,18 +69,8 @@ export default React.createClass({
                 </div>
 
                 <div className="form-group">
-                  <label>Vorname</label>
-                  <input type="text" className="form-control" value={this.state.customer.address.first_name} onChange={this.handleAddressChange.bind(this, 'first_name')} />
-                </div>
-
-                <div className="form-group">
-                  <label>Nachname</label>
-                  <input type="text" className="form-control" value={this.state.customer.address.last_name} onChange={this.handleAddressChange.bind(this, 'last_name')} />
-                </div>
-
-                <div className="form-group">
-                  <label>Firma</label>
-                  <input type="text" className="form-control" value={this.state.customer.address.company_name} onChange={this.handleAddressChange.bind(this, 'company_name')} />
+                  <label>Land</label>
+                  <input type="text" className="form-control" value={this.state.customer.address.country} onChange={this.handleAddressChange.bind(this, 'country')} />
                 </div>
 
               </form>

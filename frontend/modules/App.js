@@ -25,8 +25,8 @@ export default React.createClass({
        <div className="col-sm-3 col-md-2 sidebar">
          <ul className="nav nav-sidebar">
            <li className="active"><a href="#">Overview <span className="sr-only">(current)</span></a></li>
-           <li><Link to="/customers">Customers</Link></li>
-           <li><Link to="/customer">Customer</Link></li>
+           <li><Link to="/customers">Kunden</Link></li>
+           <li><Link to="/customer">Kunden anlegen</Link></li>
          </ul>
        </div>
        <div className="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">

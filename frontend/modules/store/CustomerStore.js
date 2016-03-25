@@ -12,6 +12,15 @@ export default Reflux.createStore({
 
     create_customer: function(c) {
       console.log(c);
+
+      $.ajax({
+        url: "/customers",
+        method: 'POST'
+      }).done(function() {
+        Action.created_customer("yeahhh");
+      }).fail(function() {
+        Action.created_customer_failed("nooopee");
+      });
     },
 
     output: function(flag) {
