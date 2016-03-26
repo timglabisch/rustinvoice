@@ -11,7 +11,7 @@ use std::collections::HashMap;
 use nickel::{Nickel, HttpRouter, MediaType};
 mod entity;
 use entity::customer::Customer;
-use hyper::header::{AccessControlAllowOrigin, AccessControlAllowHeaders};
+use hyper::header::{AccessControlAllowOrigin, AccessControlAllowHeaders, AccessControlAllowMethods};
 use unicase::UniCase;
 use std::io::Read;
 mod service;
@@ -19,6 +19,8 @@ use service::customer_service::CustomerService;
 mod es;
 mod api;
 use api::customers::ApiCustomers;
+use hyper::method::Method;
+
 
 fn main() {
     let mut server = Nickel::new();
@@ -28,6 +30,16 @@ fn main() {
         response.headers_mut().set(AccessControlAllowHeaders(vec![
             UniCase("Content-Type".to_string())
         ]));
+        response.headers_mut().set(AccessControlAllowHeaders(vec![
+            UniCase("Content-Type".to_string())
+        ]));
+        response.headers_mut().set(AccessControlAllowMethods(vec![
+            Method::Get,
+            Method::Post,
+            Method::Delete,
+            Method::Put
+        ]));
+
         ""
     });
 
@@ -59,6 +71,7 @@ fn main() {
 
     server.get("/customers", middleware! { |_, mut response|
         response.set(MediaType::Json);
+        response.headers_mut().set(AccessControlAllowOrigin::Any);
 
         serde_json::to_string(
             &ApiCustomers::new(

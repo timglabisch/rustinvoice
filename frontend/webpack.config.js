@@ -7,6 +7,10 @@ module.exports = {
     publicPath: ''
   },
 
+  devServer: {
+   headers: { "Access-Control-Allow-Origin": "*" }
+ },
+
   module: {
     loaders: [
       { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader?presets[]=es2015&presets[]=react' }

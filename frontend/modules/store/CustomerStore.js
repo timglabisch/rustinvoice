@@ -6,7 +6,6 @@ export default Reflux.createStore({
 
     init: function() {
         console.log('listen')
-        this.listenTo(Action.on, this.output);
         this.listenTo(Action.create_customer, this.create_customer)
     },
 
@@ -26,13 +25,17 @@ export default Reflux.createStore({
       });
     },
 
-    output: function(flag) {
-
-      console.log('what?!!');
-
-      var status = flag ? 'ONLINE' : 'OFFLINE';
-
-      this.trigger(status);
+    load_all: function() {
+      $.ajax({
+        url: "http://127.0.0.1:6767/customers",
+        dataType: 'json',
+        contentType: 'application/json; charset=utf-8',
+      }).done(function(data) {
+        debugger;
+        this.trigger(data);
+      }).fail(function() {
+        Action.created_customer_failed("nooopee");
+      });
     }
 
 });
