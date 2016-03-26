@@ -31,9 +31,8 @@ export default Reflux.createStore({
         dataType: 'json',
         contentType: 'application/json; charset=utf-8',
       }).done(function(data) {
-        debugger;
         this.trigger(data);
-      }).fail(function() {
+      }.bind(this)).fail(function() {
         Action.created_customer_failed("nooopee");
       });
     }

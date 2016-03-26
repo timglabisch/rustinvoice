@@ -13,13 +13,38 @@ export default React.createClass({
     this.unsubscribe();
   },
 
+  getInitialState() {
+     return { customers: [] };
+  },
+
   onStatusChange: function(customers) {
-    console.log(customers);
+    this.setState(customers);
+  },
+
+  onDelete(customer) {
+    if (!confirm("Kunden #" + customer.uuid +  " " + customer.address.first_name + " " + customer.address.last_name + " wirklich löschen?")) {
+      return;
+    }
+
+    console.log("drop customer " + uuid);
   },
 
   render() {
     return <div>
-        Customers!
+        { this.state.customers.map(function(customer) {
+            return <div style={{position: 'relative'}} key={customer.uuid}>
+              <button onClick={this.onDelete.bind(this, customer)} style={{position: 'absolute', right: 0}} type="button" className="btn btn-danger">
+                x
+              </button>
+              <div>
+                vorname: { customer.address.first_name }
+              </div>
+              <div>
+                nachname: { customer.address.last_name }
+              </div>
+              <hr/>
+            </div>
+        }.bind(this))}
       </div>
   }
 })
