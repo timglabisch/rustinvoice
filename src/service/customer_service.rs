@@ -8,11 +8,10 @@ use std::io::Read;
 
 
 impl CustomerService {
-    pub fn createNewCustomer(customer : &Customer) {
+    pub fn create_new_customer(customer : &Customer) {
         let data = serde_json::to_string(customer).expect("serialize customer to string");
 
-        let mut client = Client::new();
-        let mut res = client
+        Client::new()
             .post("http://192.168.0.79:9200/customer/foo")
             .body(&data)
             .send()
@@ -20,10 +19,9 @@ impl CustomerService {
 
     }
 
-    pub fn allCustomers() -> Vec<Customer> {
+    pub fn all_customers() -> Vec<Customer> {
 
-        let mut client = Client::new();
-        let mut res = client
+        let mut res = Client::new()
             .post("http://192.168.0.79:9200/customer/foo/_search")
             .body(&r#"{"query":{"match_all":{}}}"#.to_string())
             .send()
@@ -33,7 +31,7 @@ impl CustomerService {
         res.read_to_string(&mut body).unwrap();
 
         let es_res = serde_json::from_str::<SearchResult<Customer>>(&body).expect("parsing es result");
-        es_res.getSources()
+        es_res.get_sources()
     }
 
 

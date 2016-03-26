@@ -11,7 +11,7 @@ use std::collections::HashMap;
 use nickel::{Nickel, HttpRouter, MediaType};
 mod entity;
 use entity::customer::Customer;
-use hyper::header::{Headers, AccessControlAllowOrigin, AccessControlAllowHeaders};
+use hyper::header::{AccessControlAllowOrigin, AccessControlAllowHeaders};
 use unicase::UniCase;
 use std::io::Read;
 mod service;
@@ -21,7 +21,7 @@ mod es;
 fn main() {
     let mut server = Nickel::new();
 
-    server.options("**", middleware! { |request, mut response|
+    server.options("**", middleware! { |_, mut response|
         response.headers_mut().set(AccessControlAllowOrigin::Any);
         response.headers_mut().set(AccessControlAllowHeaders(vec![
             UniCase("Content-Type".to_string())
@@ -29,7 +29,7 @@ fn main() {
         ""
     });
 
-    server.get("/", middleware! { |request, mut response|
+    server.get("/", middleware! { |_, mut response|
 
         response.headers_mut().set(AccessControlAllowOrigin::Any);
 
@@ -43,12 +43,12 @@ fn main() {
         response.headers_mut().set(AccessControlAllowOrigin::Any);
 
         let mut x = String::new();
-        request.origin.read_to_string(&mut x);
+        request.origin.read_to_string(&mut x).unwrap();
 
         //let customer = request.json_as::<Customer>().expect("wrong json");
         let customer : Customer = serde_json::from_str(&x).unwrap();
 
-        CustomerService::createNewCustomer(&customer);
+        CustomerService::create_new_customer(&customer);
 
         println!("{:?}", customer);
 
@@ -57,7 +57,7 @@ fn main() {
 
     server.get("/customers", middleware! { |_, mut response|
         response.set(MediaType::Json);
-        serde_json::to_string(&CustomerService::allCustomers()).expect("unserialize customers")
+        serde_json::to_string(&CustomerService::all_customers()).expect("unserialize customers")
     });
 
     server.get("/customer", middleware! { |_, mut response|
@@ -68,7 +68,7 @@ fn main() {
     server.get("/customer/:uuid", middleware! { |_, mut response|
         response.set(MediaType::Json);
 
-        let c = Customer::new();
+        //let c = Customer::new();
         //let customer_as_json = json::encode(&c);
         //customer_as_json.unwrap()
     });

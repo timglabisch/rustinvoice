@@ -7,7 +7,7 @@ pub struct SearchResult<T> where T : Clone {
 }
 
 impl<T> SearchResult<T> where T : Clone {
-    pub fn getSources(&self) -> Vec<T> {
+    pub fn get_sources(&self) -> Vec<T> {
         self.hits.hits.iter().map(|hit : &SearchResultHit<T>| { hit._source.clone() }).collect()
     }
 }
