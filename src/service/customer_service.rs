@@ -19,6 +19,13 @@ impl CustomerService {
 
     }
 
+    pub fn delete(s: &String) {
+        let mut res = Client::new()
+            .delete(&(format!("http://192.168.0.79:9200/customer/foo/{}?refresh=true", s).to_string()))
+            .send()
+            .expect("sending to elastic");
+    }
+
     pub fn all_customers() -> SearchResult<Customer> {
 
         let mut res = Client::new()

@@ -26,7 +26,7 @@ export default React.createClass({
       return;
     }
 
-    console.log("drop customer " + uuid);
+    CustomerStore.delete_customer(customer);
   },
 
   render() {

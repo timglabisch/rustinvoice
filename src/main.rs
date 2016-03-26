@@ -69,6 +69,16 @@ fn main() {
         "[]"
     });
 
+    server.delete("/customers/:uuid", middleware! { |request, mut response|
+        response.headers_mut().set(AccessControlAllowOrigin::Any);
+
+        CustomerService::delete(
+            &request.param("uuid").expect("delete without uuid").to_string()
+        );
+
+        ""
+    });
+
     server.get("/customers", middleware! { |_, mut response|
         response.set(MediaType::Json);
         response.headers_mut().set(AccessControlAllowOrigin::Any);
