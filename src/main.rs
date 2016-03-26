@@ -17,6 +17,8 @@ use std::io::Read;
 mod service;
 use service::customer_service::CustomerService;
 mod es;
+mod api;
+use api::customers::ApiCustomers;
 
 fn main() {
     let mut server = Nickel::new();
@@ -57,7 +59,12 @@ fn main() {
 
     server.get("/customers", middleware! { |_, mut response|
         response.set(MediaType::Json);
-        serde_json::to_string(&CustomerService::all_customers()).expect("unserialize customers")
+
+        serde_json::to_string(
+            &ApiCustomers::new(
+                &CustomerService::all_customers()
+            )
+        ).expect("unserialize customers")
     });
 
     server.get("/customer", middleware! { |_, mut response|

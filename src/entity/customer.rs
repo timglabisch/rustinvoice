@@ -2,7 +2,7 @@ use super::address::Address;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Customer {
-    address : Address,
+    pub address : Address,
 }
 
 impl Customer {
