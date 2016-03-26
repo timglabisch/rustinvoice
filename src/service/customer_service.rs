@@ -4,6 +4,7 @@ use hyper::Client;
 use entity::customer::Customer;
 use serde_json;
 use es::search::SearchResult;
+use es::id::IdResult;
 use std::io::Read;
 
 
@@ -15,15 +16,28 @@ impl CustomerService {
             .post("http://192.168.0.79:9200/customer/foo")
             .body(&data)
             .send()
-            .expect("sending to elastic");
+            .expect("sending post to elastic");
 
     }
 
     pub fn delete(s: &String) {
-        let mut res = Client::new()
+        Client::new()
             .delete(&(format!("http://192.168.0.79:9200/customer/foo/{}?refresh=true", s).to_string()))
             .send()
-            .expect("sending to elastic");
+            .expect("sending delete to elastic");
+    }
+
+    pub fn get_by_id(s : &String) -> IdResult<Customer> {
+        let mut res = Client::new()
+            .get(&(format!("http://192.168.0.79:9200/customer/foo/{}", s).to_string()))
+            .send()
+            .expect("sending get to elastic");
+
+        let mut body = String::new();
+        res.read_to_string(&mut body).unwrap();
+
+        let es_res = serde_json::from_str::<IdResult<Customer>>(&body).expect("parsing es customer id result");
+        es_res
     }
 
     pub fn all_customers() -> SearchResult<Customer> {

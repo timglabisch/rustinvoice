@@ -19,6 +19,7 @@ use service::customer_service::CustomerService;
 mod es;
 mod api;
 use api::customers::ApiCustomers;
+use api::customers::ApiCustomer;
 use hyper::method::Method;
 
 
@@ -95,12 +96,16 @@ fn main() {
         "[]"
     });
 
-    server.get("/customer/:uuid", middleware! { |_, mut response|
+    server.get("/customers/:uuid", middleware! { |request, mut response|
         response.set(MediaType::Json);
 
-        //let c = Customer::new();
-        //let customer_as_json = json::encode(&c);
-        //customer_as_json.unwrap()
+        let api_customer_id_result = CustomerService::get_by_id(
+            &request.param("uuid").expect("get without uuid").to_string()
+        );
+
+        let api_customer : ApiCustomer = api_customer_id_result.into();
+
+        serde_json::to_string(&api_customer).expect("unserialize customers")
     });
 
     server.listen("127.0.0.1:6767");
