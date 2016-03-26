@@ -5,8 +5,10 @@ authors = ["timglabisch <tim@ainfach.de>"]
 
 [dependencies]
 nickel = "0.7.3"
-rustc-serialize = "0.3"
 unicase = "*"
+serde = "^0.7"
+serde_json = "^0.7"
+serde_macros = "^0.7"
 
 [dependencies.hyper]
 version = "=0.6"

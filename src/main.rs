@@ -1,15 +1,19 @@
+#![feature(custom_derive, plugin)]
+#![plugin(serde_macros)]
+
+extern crate serde;
+extern crate serde_json;
 #[macro_use] extern crate nickel;
-extern crate rustc_serialize;
 #[macro_use] extern crate hyper;
 extern crate unicase;
 
 use std::collections::HashMap;
-use nickel::{Nickel, HttpRouter, MediaType, JsonBody};
-use rustc_serialize::json;
+use nickel::{Nickel, HttpRouter, MediaType};
 mod entity;
 use entity::customer::Customer;
 use hyper::header::{Headers, AccessControlAllowOrigin, AccessControlAllowHeaders};
 use unicase::UniCase;
+use std::io::Read;
 
 fn main() {
     let mut server = Nickel::new();
@@ -35,7 +39,11 @@ fn main() {
         response.set(MediaType::Json);
         response.headers_mut().set(AccessControlAllowOrigin::Any);
 
-        let customer = request.json_as::<Customer>().expect("wrong json");
+        let mut x = String::new();
+        request.origin.read_to_string(&mut x);
+
+        //let customer = request.json_as::<Customer>().expect("wrong json");
+        let customer : Customer = serde_json::from_str(&x).unwrap();
 
         println!("{:?}", customer);
 
@@ -51,8 +59,8 @@ fn main() {
         response.set(MediaType::Json);
 
         let c = Customer::new();
-        let customer_as_json = json::encode(&c);
-        customer_as_json.unwrap()
+        //let customer_as_json = json::encode(&c);
+        //customer_as_json.unwrap()
     });
 
     server.listen("127.0.0.1:6767");

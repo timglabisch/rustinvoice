@@ -1,6 +1,6 @@
 use super::address::Address;
 
-#[derive(RustcDecodable, RustcEncodable, Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Customer {
     address : Address,
 }
