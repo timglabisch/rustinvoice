@@ -14,6 +14,9 @@ use entity::customer::Customer;
 use hyper::header::{Headers, AccessControlAllowOrigin, AccessControlAllowHeaders};
 use unicase::UniCase;
 use std::io::Read;
+mod service;
+use service::customer_service::CustomerService;
+mod es;
 
 fn main() {
     let mut server = Nickel::new();
@@ -45,9 +48,16 @@ fn main() {
         //let customer = request.json_as::<Customer>().expect("wrong json");
         let customer : Customer = serde_json::from_str(&x).unwrap();
 
+        CustomerService::createNewCustomer(&customer);
+
         println!("{:?}", customer);
 
         "[]"
+    });
+
+    server.get("/customers", middleware! { |_, mut response|
+        response.set(MediaType::Json);
+        serde_json::to_string(&CustomerService::allCustomers()).expect("unserialize customers")
     });
 
     server.get("/customer", middleware! { |_, mut response|

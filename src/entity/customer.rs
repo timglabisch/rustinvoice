@@ -1,6 +1,6 @@
 use super::address::Address;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Customer {
     address : Address,
 }

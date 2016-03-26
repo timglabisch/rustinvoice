@@ -1,4 +1,4 @@
-#[derive(Serialize, Deserialize, Default, Debug)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone)]
 pub struct Address {
     country : String,
     street : String,
