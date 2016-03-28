@@ -20,6 +20,7 @@ mod es;
 mod api;
 use api::customers::ApiCustomers;
 use api::customers::ApiCustomer;
+use api::ApiCreated;
 use hyper::method::Method;
 
 
@@ -63,11 +64,13 @@ fn main() {
         //let customer = request.json_as::<Customer>().expect("wrong json");
         let customer : Customer = serde_json::from_str(&x).unwrap();
 
-        CustomerService::create_new_customer(&customer);
+        let es_created_res = CustomerService::create_new_customer(&customer);
 
-        println!("{:?}", customer);
-
-        "[]"
+        serde_json::to_string(
+            &ApiCreated::new(
+                es_created_res._id
+            )
+        ).expect("serialize customer created")
     });
 
     server.delete("/customers/:uuid", middleware! { |request, mut response|
@@ -88,7 +91,7 @@ fn main() {
             &ApiCustomers::new(
                 &CustomerService::all_customers()
             )
-        ).expect("unserialize customers")
+        ).expect("serialize customers")
     });
 
     server.get("/customer", middleware! { |_, mut response|

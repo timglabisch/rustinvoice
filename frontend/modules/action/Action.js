@@ -5,5 +5,7 @@ export default Reflux.createActions([
   "off",
   "create_customer",
   "created_customer",
-  "created_customer_failed"
+  "created_customer_failed",
+  "load_customers",
+  "delete_customer"
 ]);

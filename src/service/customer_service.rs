@@ -5,19 +5,25 @@ use entity::customer::Customer;
 use serde_json;
 use es::search::SearchResult;
 use es::id::IdResult;
+use es::create::CreateResult;
 use std::io::Read;
 
 
 impl CustomerService {
-    pub fn create_new_customer(customer : &Customer) {
+    pub fn create_new_customer(customer : &Customer) -> CreateResult {
         let data = serde_json::to_string(customer).expect("serialize customer to string");
 
-        Client::new()
+        let mut res = Client::new()
             .post("http://192.168.0.79:9200/customer/foo")
             .body(&data)
             .send()
             .expect("sending post to elastic");
 
+        let mut body = String::new();
+        res.read_to_string(&mut body).unwrap();
+
+        let es_res = serde_json::from_str::<CreateResult>(&body).expect("parsing es customer create");
+        es_res
     }
 
     pub fn delete(s: &String) {

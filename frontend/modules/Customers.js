@@ -1,12 +1,13 @@
 import React from 'react'
 import Customer from './dto/Customer'
-import CustomerStore from './store/CustomerStore'
+import CustomersStore from './store/CustomersStore'
+import Action from './action/Action'
 
 export default React.createClass({
 
   componentDidMount: function() {
-    CustomerStore.load_all();
-    this.unsubscribe = CustomerStore.listen(this.onStatusChange);
+    this.unsubscribe = CustomersStore.listen(this.onStatusChange);
+    Action.load_customers();
   },
 
   componentWillUnmount: function() {
@@ -14,23 +15,31 @@ export default React.createClass({
   },
 
   getInitialState() {
-     return { customers: [] };
+     return {
+       loading: CustomersStore.isLoading(),
+       customers: CustomersStore.getCustomers()
+     };
   },
 
-  onStatusChange: function(customers) {
-    this.setState(customers);
+  onStatusChange: function() {
+    console.log("got?");
+    this.setState({
+      loading: CustomersStore.isLoading(),
+      customers: CustomersStore.getCustomers()
+    });
   },
 
   onDelete(customer) {
     if (!confirm("Kunden #" + customer.uuid +  " " + customer.address.first_name + " " + customer.address.last_name + " wirklich löschen?")) {
       return;
     }
-
-    CustomerStore.delete_customer(customer);
+    Action.delete_customer(customer);
   },
 
   render() {
     return <div>
+        { this.loading && <div className="alert alert-info" role="alert">Kunden werden momenten aktualisiert</div> }
+
         { this.state.customers.map(function(customer) {
             return <div style={{position: 'relative'}} key={customer.uuid}>
               <button onClick={this.onDelete.bind(this, customer)} style={{position: 'absolute', right: 0}} type="button" className="btn btn-danger">

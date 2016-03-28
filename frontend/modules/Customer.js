@@ -6,7 +6,13 @@ import Action from './action/Action'
 export default React.createClass({
 
   getInitialState() {
-     return { customer: new Customer() };
+     return {
+       txid : Math.random(),
+       customer: new Customer(),
+       is_saving: false,
+       has_error: false,
+       is_created: false
+     };
   },
 
   componentDidMount: function() {
@@ -18,23 +24,34 @@ export default React.createClass({
   },
 
   onStatusChange: function() {
-    console.log("yepp");
+    var state = CustomerStore.getCustomerState(this.state.txid);
+
+    this.setState({
+      is_saving: state.is_saving,
+      has_error: state.has_error,
+      is_created: state.is_created
+    })
   },
 
   handleAddressChange(field, e) {
     this.state.customer.address[field] = e.target.value;
-
-    Action.on();
-
     this.setState(this.state);
   },
 
   handleCreate() {
-    Action.create_customer(this.state.customer)
+    Action.create_customer(
+      this.state.txid,
+      this.state.customer
+    )
   },
 
   render() {
     return <div>
+
+            { this.state.is_created && <div className="alert alert-success" role="alert">Kunde wurde gespeichert</div> }
+            { this.state.has_error && <div className="alert alert-danger" role="alert">Es ist leider ein Fehler aufgetreten.</div> }
+            { this.state.is_saving && <div className="alert alert-info" role="alert">Kunde wird gespeichert</div> }
+
             <div>
               <form>
 
