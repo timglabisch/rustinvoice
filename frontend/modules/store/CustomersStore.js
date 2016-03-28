@@ -8,9 +8,9 @@ export default Reflux.createStore({
       this.customers = [];
       this.loading = 0;
 
-      this.listenTo(Action.create_customer, this.on_load_customers);
-      this.listenTo(Action.load_customers, this.on_load_customers);
-      this.listenTo(Action.delete_customer, this.on_load_customers);
+      this.listenTo(Action.require_customers, this.on_load_customers);
+      this.listenTo(Action.created_customer, this.on_load_customers);
+      this.listenTo(Action.deleted_customer, this.on_load_customers);
     },
 
     isLoading : function() {

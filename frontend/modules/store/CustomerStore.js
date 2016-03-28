@@ -9,6 +9,7 @@ export default Reflux.createStore({
         this.listenTo(Action.delete_customer, this.on_delete_customer);
 
         this.transaction_states = {};
+        this.deletions = {};
     },
 
     getCustomerState: function(txid) {
@@ -47,6 +48,7 @@ export default Reflux.createStore({
           has_error: false,
           is_saving: false
         };
+        Action.created_customer();
       }.bind(this)).fail(function() {
         this.transaction_states[txid] = {
           type: 'customer_create',
@@ -59,37 +61,33 @@ export default Reflux.createStore({
       }.bind(this));
     },
 
-    on_delete_customer: function(txid, customer) {
+    getDeletions: function(since, state) {
+      return Object.keys(this.deletions)
+        .filter(function(logentryKey) {
+          return this.deletions[logentryKey].date >= since && (!state || this.deletions[logentryKey].state == state);
+        }.bind(this)).map(function(logentryKey) {
+          return this.deletions[logentryKey];
+        }.bind(this));
+    },
 
-      if (!txid) {
-        console.log("missing transaction id");
-        return;
-      }
+    on_delete_customer: function(customer) {
 
-      this.transaction_states[txid] = {
-        type: 'customer_delete',
-        is_deleted: false,
-        has_error: false,
-        is_saving: false
+      this.deletions[customer.uuid] = {
+        customer: customer,
+        date: new Date(),
+        state: 'deleting'
       };
 
       $.ajax({
         url: "http://127.0.0.1:6767/customers/" + customer.uuid,
         method: 'DELETE',
         cache: false
-      }.bind(this)).done(function() {
-        this.transaction_states[txid] = {
-          type: 'customer_delete',
-          is_deleted: true,
-          has_error: false
-        };
+      }).done(function() {
+        this.deletions[customer.uuid].state = "deleted"
+        Action.deleted_customer();
       }.bind(this)).fail(function() {
-        this.transaction_states[txid] = {
-          type: 'customer_delete',
-          is_deleted: false,
-          has_error: true
-        };
-      }).complete(function() {
+        this.deletions[customer.uuid].state = "failed"
+      }.bind(this)).complete(function() {
         this.trigger()
       }.bind(this));
     }
