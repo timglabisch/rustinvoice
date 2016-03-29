@@ -7,17 +7,11 @@ export default Reflux.createStore({
     init: function() {
         this.listenTo(Action.create_customer, this.on_create_customer);
         this.listenTo(Action.delete_customer, this.on_delete_customer);
+        this.listenTo(Action.load_customer, this.on_load_customer);
+        this.listenTo(Action.update_customer, this.on_update_customer);
 
-        this.transaction_states = {};
-        this.deletions = {};
-    },
-
-    getCustomerState: function(txid) {
-      if (!this.transaction_states[txid]) {
-        throw "unknown state request " + txid;
-      }
-
-      return this.transaction_states[txid];
+        this.customers = {};
+        this.logs = {};
     },
 
     on_create_customer: function(txid, customer) {
@@ -27,11 +21,10 @@ export default Reflux.createStore({
         return;
       }
 
-      this.transaction_states[txid] = {
-        type: 'customer_create',
-        is_created: false,
-        has_error: false,
-        is_saving: true
+      this.logs[txid] = {
+        customer: customer,
+        date: new Date(),
+        state: 'saving'
       };
 
       $.ajax({
@@ -42,37 +35,89 @@ export default Reflux.createStore({
         contentType: 'application/json; charset=utf-8',
         cache: false
       }).done(function() {
-        this.transaction_states[txid] = {
-          type: 'customer_create',
-          is_created: true,
-          has_error: false,
-          is_saving: false
-        };
+        this.logs[txid].state = "saving_success"
         Action.created_customer();
       }.bind(this)).fail(function() {
-        this.transaction_states[txid] = {
-          type: 'customer_create',
-          is_created: false,
-          has_error: true,
-          is_saving: false
-        };
+        his.logs[txid].state = "saving_failed"
       }.bind(this)).complete(function() {
         this.trigger();
       }.bind(this));
     },
 
-    getDeletions: function(since, state) {
-      return Object.keys(this.deletions)
+    getLog: function(id, since, state) {
+
+      if (!this.logs[id]) {
+        return null;
+      }
+
+      if (!(this.logs[id].date >= since && (!state || this.logs[id].state == state))) {
+        return null;
+      }
+
+      return this.logs[id];
+    },
+
+    getLogs: function(since, state) {
+      return Object.keys(this.logs)
+        .map(function(logentryKey) {
+          return this.getLog(logentryKey, since, state);
+        }.bind(this))
         .filter(function(logentryKey) {
-          return this.deletions[logentryKey].date >= since && (!state || this.deletions[logentryKey].state == state);
-        }.bind(this)).map(function(logentryKey) {
-          return this.deletions[logentryKey];
+          return logentryKey;
         }.bind(this));
+    },
+
+    getCustomer: function(uuid) {
+      return this.customers[uuid] || null;
+    },
+
+    on_update_customer: function(customer) {
+
+      this.customers[customer.uuid] = customer;
+
+      this.logs[customer.uuid] = {
+        date: new Date(),
+        state: 'updating'
+      };
+
+      $.ajax({
+        url: "http://127.0.0.1:6767/customers/" + customer.uuid,
+        method: 'PUT',
+        cache: false
+      }).done(function(customer) {
+        this.logs[customer.uuid].state = "updating_success"
+      }.bind(this)).fail(function() {
+        this.logs[customer.uuid].state = "updating_failed"
+      }.bind(this)).complete(function() {
+        this.trigger()
+      }.bind(this));
+    },
+
+    on_load_customer: function(uuid) {
+      this.logs[uuid] = {
+        date: new Date(),
+        state: 'loading'
+      };
+
+      $.ajax({
+        url: "http://127.0.0.1:6767/customers/" + uuid,
+        method: 'GET',
+        cache: false
+      }).done(function(customer) {
+        this.logs[uuid].state = "loading_success"
+        this.customers[uuid] = customer;
+      }.bind(this)).fail(function() {
+        this.logs[uuid].state = "loading_failed"
+      }.bind(this)).complete(function() {
+        this.trigger()
+      }.bind(this));
     },
 
     on_delete_customer: function(customer) {
 
-      this.deletions[customer.uuid] = {
+      delete this.customers[customer.uuid];
+
+      this.logs[customer.uuid] = {
         customer: customer,
         date: new Date(),
         state: 'deleting'
@@ -83,10 +128,10 @@ export default Reflux.createStore({
         method: 'DELETE',
         cache: false
       }).done(function() {
-        this.deletions[customer.uuid].state = "deleted"
+        this.logs[customer.uuid].state = "deleting_success"
         Action.deleted_customer();
       }.bind(this)).fail(function() {
-        this.deletions[customer.uuid].state = "failed"
+        this.logs[customer.uuid].state = "deleting_failed"
       }.bind(this)).complete(function() {
         this.trigger()
       }.bind(this));

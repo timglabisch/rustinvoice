@@ -7,16 +7,19 @@ export default React.createClass({
 
   getInitialState() {
      return {
+       customer_uuid : this.props.params.uuid ? this.props.params.uuid : null,
        txid : Math.random(),
-       customer: new Customer(),
-       is_saving: false,
-       has_error: false,
-       is_created: false
+       customer: this.props.params.uuid ? CustomerStore.getCustomer(this.props.params.uuid) : new Customer(),
+       mounted_since: new Date
      };
   },
 
   componentDidMount: function() {
     this.unsubscribe = CustomerStore.listen(this.onStatusChange);
+
+    if (this.state.customer_uuid) {
+      Action.load_customer(this.state.customer_uuid);
+    }
   },
 
   componentWillUnmount: function() {
@@ -24,12 +27,23 @@ export default React.createClass({
   },
 
   onStatusChange: function() {
-    var state = CustomerStore.getCustomerState(this.state.txid);
+
+    if (this.state.customer_uuid) {
+      this.setState({
+        customer: CustomerStore.getCustomer(this.state.customer_uuid)
+      })
+    }
 
     this.setState({
-      is_saving: state.is_saving,
-      has_error: state.has_error,
-      is_created: state.is_created
+      loading: CustomerStore.getLog(this.state.customer_uuid, this.state.mounted_since, 'loading'),
+      loading_success: CustomerStore.getLog(this.state.customer_uuid, this.state.mounted_since, 'loading_success'),
+      loading_failed: CustomerStore.getLog(this.state.customer_uuid, this.state.mounted_since, 'loading_failed'),
+      saving: CustomerStore.getLog(this.state.txid, this.state.mounted_since, 'saving'),
+      saving_success: CustomerStore.getLog(this.state.txid, this.state.mounted_since, 'saving_success'),
+      saving_failed: CustomerStore.getLog(this.state.txid, this.state.mounted_since, 'saving_failed'),
+      updating: CustomerStore.getLog(this.state.customer_uuid, this.state.mounted_since, 'updating'),
+      updating_success: CustomerStore.getLog(this.state.customer_uuid, this.state.mounted_since, 'updating_success'),
+      updating_failed: CustomerStore.getLog(this.state.customer_uuid, this.state.mounted_since, 'updating_failed')
     })
   },
 
@@ -45,12 +59,32 @@ export default React.createClass({
     )
   },
 
+  handleUpdate() {
+    Action.update_customer(
+      this.state.customer
+    )
+  },
+
   render() {
+
+    if (this.state.customer_uuid && !this.state.customer && !this.state.saving_failed) {
+      return <div>Kunde wird geladen, einen Moment bitte</div>
+    }
+
     return <div>
 
-            { this.state.is_created && <div className="alert alert-success" role="alert">Kunde wurde gespeichert</div> }
-            { this.state.has_error && <div className="alert alert-danger" role="alert">Es ist leider ein Fehler aufgetreten.</div> }
-            { this.state.is_saving && <div className="alert alert-info" role="alert">Kunde wird gespeichert</div> }
+            { this.state.saving && <div className="alert alert-info" role="alert">Kunde wurde angelegt</div> }
+            { this.state.saving_success && <div className="alert alert-success" role="alert">Kunde wurde angelegt</div> }
+            { this.state.saving_failed && <div className="alert alert-danger" role="alert">Beim anlegen des Kunden ist ein Fehler aufgetreten.</div> }
+
+            { this.state.loading && <div className="alert alert-info" role="alert">Kunde wird geladen</div> }
+            { this.state.loading_success && false && <div className="alert alert-success" role="alert">Kunde wurde geladen</div> }
+            { this.state.loading_failed && <div className="alert alert-danger" role="alert">Beim Laden des Kunden ist ein Fehler aufgetreten.</div> }
+
+            { this.state.updating && <div className="alert alert-info" role="alert">Kunde wird aktualisiert</div> }
+            { this.state.updating_success && <div className="alert alert-success" role="alert">Kunde wurde aktualisiert</div> }
+            { this.state.updating_failed && <div className="alert alert-danger" role="alert">Beim aktualisieren des Kunden ist ein Fehler aufgetreten.</div> }
+
 
             <div>
               <form>
@@ -93,8 +127,8 @@ export default React.createClass({
               </form>
 
               {(() => {
-                if (this.state.customer.uuid) {
-                  return <input type="submit" value="Speichern" onClick={this.handleSave} />
+                if (this.state.customer_uuid) {
+                  return <input type="submit" value="Speichern" onClick={this.handleUpdate} />
                 } else {
                   return <input type="submit" value="Anlegen" onClick={this.handleCreate} />
                 }

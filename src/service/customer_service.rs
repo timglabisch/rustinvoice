@@ -10,6 +10,17 @@ use std::io::Read;
 
 
 impl CustomerService {
+
+    pub fn update_customer(uuid : &String, customer : &Customer) {
+        let data = serde_json::to_string(customer).expect("serialize customer to string");
+
+        let mut res = Client::new()
+            .post(&(format!("http://192.168.0.79:9200/customer/foo/{}", uuid)).to_string())
+            .body(&data)
+            .send()
+            .expect("sending update to elastic");
+    }
+
     pub fn create_new_customer(customer : &Customer) -> CreateResult {
         let data = serde_json::to_string(customer).expect("serialize customer to string");
 

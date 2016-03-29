@@ -28,10 +28,7 @@ export default React.createClass({
 
   onStatusChange: function() {
     this.setState({
-      deletion_error: !!CustomerStore.getDeletions(
-        this.state.mounted_since,
-        'failed'
-      ).length,
+      deleting_failed: !!CustomerStore.getLogs(this.state.mounted_since, 'deleting_failed').length,
       loading: CustomersStore.isLoading(),
       customers: CustomersStore.getCustomers()
     });
@@ -49,7 +46,7 @@ export default React.createClass({
   render() {
     return <div>
         { this.state.loading && <div className="alert alert-info" role="alert">Kunden werden momenten aktualisiert</div> }
-        { this.state.deletion_error && <div className="alert alert-danger" role="alert">Beim Löschen ist ein Fehler aufgetreten</div> }
+        { this.state.deleting_failed && <div className="alert alert-danger" role="alert">Beim Löschen ist ein Fehler aufgetreten</div> }
 
         { this.state.customers.map(function(customer) {
             return <div style={{position: 'relative'}} key={customer.uuid}>

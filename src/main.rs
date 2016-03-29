@@ -46,7 +46,6 @@ fn main() {
     });
 
     server.get("/", middleware! { |_, mut response|
-
         response.headers_mut().set(AccessControlAllowOrigin::Any);
 
         let mut data = HashMap::new();
@@ -61,7 +60,6 @@ fn main() {
         let mut x = String::new();
         request.origin.read_to_string(&mut x).unwrap();
 
-        //let customer = request.json_as::<Customer>().expect("wrong json");
         let customer : Customer = serde_json::from_str(&x).unwrap();
 
         let es_created_res = CustomerService::create_new_customer(&customer);
@@ -71,6 +69,23 @@ fn main() {
                 es_created_res._id
             )
         ).expect("serialize customer created")
+    });
+
+    server.put("/customers/:uuid", middleware! { |request, mut response|
+        response.set(MediaType::Json);
+        response.headers_mut().set(AccessControlAllowOrigin::Any);
+
+        let mut x = String::new();
+        request.origin.read_to_string(&mut x).unwrap();
+
+        let customer : Customer = serde_json::from_str(&x).unwrap();
+
+        CustomerService::update_customer(
+            &request.param("uuid").expect("update without uuid").to_string(),
+            &customer
+        );
+
+        ""
     });
 
     server.delete("/customers/:uuid", middleware! { |request, mut response|
@@ -101,6 +116,7 @@ fn main() {
 
     server.get("/customers/:uuid", middleware! { |request, mut response|
         response.set(MediaType::Json);
+        response.headers_mut().set(AccessControlAllowOrigin::Any);
 
         let api_customer_id_result = CustomerService::get_by_id(
             &request.param("uuid").expect("get without uuid").to_string()
