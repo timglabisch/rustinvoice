@@ -83,8 +83,9 @@ export default Reflux.createStore({
       $.ajax({
         url: "http://127.0.0.1:6767/customers/" + customer.uuid,
         method: 'PUT',
+        data: JSON.stringify(customer),
         cache: false
-      }).done(function(customer) {
+      }).done(function() {
         this.logs[customer.uuid].state = "updating_success"
       }.bind(this)).fail(function() {
         this.logs[customer.uuid].state = "updating_failed"
@@ -102,6 +103,7 @@ export default Reflux.createStore({
       $.ajax({
         url: "http://127.0.0.1:6767/customers/" + uuid,
         method: 'GET',
+        contentType: 'application/json; charset=utf-8',
         cache: false
       }).done(function(customer) {
         this.logs[uuid].state = "loading_success"

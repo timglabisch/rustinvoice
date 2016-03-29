@@ -78,14 +78,16 @@ fn main() {
         let mut x = String::new();
         request.origin.read_to_string(&mut x).unwrap();
 
-        let customer : Customer = serde_json::from_str(&x).unwrap();
+        println!("{:?}", &x);
+
+        let customer : Customer = serde_json::from_str(&x).expect("could not deserialize customer on put");
 
         CustomerService::update_customer(
             &request.param("uuid").expect("update without uuid").to_string(),
             &customer
         );
 
-        ""
+        "[]"
     });
 
     server.delete("/customers/:uuid", middleware! { |request, mut response|

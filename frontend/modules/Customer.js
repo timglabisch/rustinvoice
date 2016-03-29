@@ -7,14 +7,22 @@ export default React.createClass({
 
   getInitialState() {
      return {
-       customer_uuid : this.props.params.uuid ? this.props.params.uuid : null,
        txid : Math.random(),
-       customer: this.props.params.uuid ? CustomerStore.getCustomer(this.props.params.uuid) : new Customer(),
-       mounted_since: new Date
+       mounted_since: new Date,
+       customer_uuid : this.props.params.uuid ? this.props.params.uuid : null,
+       customer: this.props.params.uuid ? CustomerStore.getCustomer(this.props.params.uuid) : new Customer()
      };
   },
 
+  componentWillReceiveProps(nextProps) {
+   this.setState({
+     customer_uuid : nextProps.params.uuid ? nextProps.params.uuid : null,
+     customer: nextProps.params.uuid ? CustomerStore.getCustomer(nextProps.params.uuid) : new Customer()
+   })
+  },
+
   componentDidMount: function() {
+
     this.unsubscribe = CustomerStore.listen(this.onStatusChange);
 
     if (this.state.customer_uuid) {
