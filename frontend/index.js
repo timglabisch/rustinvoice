@@ -2,6 +2,7 @@ import React from 'react'
 import { render } from 'react-dom'
 import App from './modules/App'
 import Customer from './modules/Customer'
+import Invoice from './modules/Invoice'
 import Customers from './modules/Customers'
 import { Router, Route, hashHistory, Link } from 'react-router'
 
@@ -11,6 +12,7 @@ render((
        <Route path="/" component={App}>
          <Route path="/customers" component={Customers}/>
          <Route path="/customer" component={Customer}/>
+         <Route path="/invoice" component={Invoice}/>
          <Route path="/customer/:uuid" component={Customer}/>
        </Route>
      </Router>

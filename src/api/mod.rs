@@ -1,4 +1,5 @@
 pub mod customers;
+pub mod invoices;
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone)]
 pub struct ApiCreated {

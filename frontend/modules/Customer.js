@@ -16,6 +16,8 @@ export default React.createClass({
 
   componentWillReceiveProps(nextProps) {
    this.setState({
+     txid : Math.random(),
+     mounted_since: new Date,
      customer_uuid : nextProps.params.uuid ? nextProps.params.uuid : null,
      customer: nextProps.params.uuid ? CustomerStore.getCustomer(nextProps.params.uuid) : new Customer()
    })
