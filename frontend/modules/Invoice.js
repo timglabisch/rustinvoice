@@ -57,6 +57,10 @@ export default React.createClass({
     })
   },
 
+  handleChange() {
+
+  },
+
   handleAddressChange(field, e) {
     this.state.invoice.address[field] = e.target.value;
     this.setState(this.state);
@@ -99,6 +103,28 @@ export default React.createClass({
             <div>
               <form>
 
+                <h3>Rechnung / Angebot</h3>
+
+                <div className="form-group">
+                  <label>Type</label>
+                  <select className="form-control">
+                    <option>Angebot</option>
+                    <option>Rechnung</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label>Nummer</label>
+                  <input type="text" className="form-control" value={this.state.invoice.number} onChange={this.handleChange.bind(this, 'number')} />
+                </div>
+
+                <div className="form-group">
+                  <label>Datum</label>
+                  <input type="date" className="form-control" value={this.state.invoice.date} onChange={this.handleChange.bind(this, 'date')} />
+                </div>
+
+                <h3>Kundendaten</h3>
+
                 <div className="form-group">
                   <label>Vorname</label>
                   <input type="text" className="form-control" value={this.state.invoice.address.first_name} onChange={this.handleAddressChange.bind(this, 'first_name')} />
@@ -135,8 +161,11 @@ export default React.createClass({
                 </div>
 
                 { this.state.invoice.getItems().map(function(item, i) {
-                    return <div key={i} draggable="true">
+                    return <div key={i} draggable="true" style={{position: "relative"}}>
                       <hr/>
+                      <button style={{position: 'absolute', right: 0}} type="button" className="btn btn-danger">
+                        x
+                      </button>
                       <div className="form-group form-inline">
                         <label style={{marginRight:"15px"}}>Anzahl</label>
                         <input style={{width:"80px"}} placeholder="1" type="text" className="form-control" value={item.getQuantity()} />

@@ -1,4 +1,4 @@
-use api::customers::ApiCustomer;
+use entity::address::Address;
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone)]
 pub struct Invoices {
@@ -7,13 +7,13 @@ pub struct Invoices {
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone)]
 pub struct Invoice {
-    pub customer : ApiCustomer,
+    pub address : Address,
     pub items : Vec<InvoiceItem>
 }
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone)]
 pub struct InvoiceItem {
     pub quantity : i32,
-    pub text : String
+    pub text : String,
     pub cost : i32
 }

@@ -11,15 +11,19 @@ use std::collections::HashMap;
 use nickel::{Nickel, HttpRouter, MediaType};
 mod entity;
 use entity::customer::Customer;
+use entity::invoice::Invoice;
 use hyper::header::{AccessControlAllowOrigin, AccessControlAllowHeaders, AccessControlAllowMethods};
 use unicase::UniCase;
 use std::io::Read;
 mod service;
 use service::customer_service::CustomerService;
+use service::invoice_service::InvoiceService;
 mod es;
 mod api;
 use api::customers::ApiCustomers;
 use api::customers::ApiCustomer;
+use api::invoices::ApiInvoice;
+use api::invoices::ApiInvoices;
 use api::ApiCreated;
 use hyper::method::Method;
 
@@ -128,6 +132,55 @@ fn main() {
 
         serde_json::to_string(&api_customer).expect("unserialize customers")
     });
+
+    server.get("/invoices", middleware! { |request, mut response|
+        response.set(MediaType::Json);
+        response.headers_mut().set(AccessControlAllowOrigin::Any);
+
+        serde_json::to_string(
+            &ApiInvoices::new(
+                &InvoiceService::all_invoices()
+            )
+        ).expect("serialize api invoices")
+    });
+
+    server.put("/invoices/:uuid", middleware! { |request, mut response|
+        response.set(MediaType::Json);
+        response.headers_mut().set(AccessControlAllowOrigin::Any);
+
+        let mut x = String::new();
+        request.origin.read_to_string(&mut x).unwrap();
+
+        println!("{:?}", &x);
+
+        let invoice : Invoice = serde_json::from_str(&x).expect("could not deserialize invoice on put");
+
+        InvoiceService::update_invoice(
+            &request.param("uuid").expect("update without uuid").to_string(),
+            &invoice
+        );
+
+        "[]"
+    });
+
+    server.post("/invoices", middleware! { |request, mut response|
+        response.set(MediaType::Json);
+        response.headers_mut().set(AccessControlAllowOrigin::Any);
+
+        let mut x = String::new();
+        request.origin.read_to_string(&mut x).unwrap();
+
+        let invoice : Invoice = serde_json::from_str(&x).unwrap();
+
+        let es_created_res = InvoiceService::create_new_invoice(&invoice);
+
+        serde_json::to_string(
+            &ApiCreated::new(
+                es_created_res._id
+            )
+        ).expect("serialize invoice created")
+    });
+
 
     server.listen("127.0.0.1:6767");
 }

@@ -38,7 +38,7 @@ export default Reflux.createStore({
         this.logs[txid].state = "saving_success"
         Action.created_customer();
       }.bind(this)).fail(function() {
-        his.logs[txid].state = "saving_failed"
+        this.logs[txid].state = "saving_failed"
       }.bind(this)).complete(function() {
         this.trigger();
       }.bind(this));
