@@ -8,8 +8,9 @@ export default class {
     this.number = null;
     this.date = null;
     this.items = [
-      new InvoiceItem(1, "foobar", 5.99),
-      new InvoiceItem(1, "blubb", 10.00)
+      new InvoiceItem(),
+      new InvoiceItem(),
+      new InvoiceItem()
     ];
   }
 

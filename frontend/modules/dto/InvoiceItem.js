@@ -6,6 +6,7 @@ export default class {
     this.quantity = quantity;
     this.text = text;
     this.cost = cost;
+    this.key = Math.random();
   }
 
   getQuantity() {

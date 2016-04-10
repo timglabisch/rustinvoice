@@ -1,7 +1,13 @@
 import React from 'react'
 import Invoice from './dto/Invoice'
+import InvoiceItem from './dto/InvoiceItem'
 import InvoiceStore from './store/InvoiceStore'
 import Action from './action/Action'
+
+var placeholder = document.createElement("div");
+placeholder.innerHTML = "Hierher verschieben.";
+placeholder.style = "brackgroundColor: yellow; font-size: 25px; position:absolute; display:none";
+placeholder.className = "placeholder";
 
 export default React.createClass({
 
@@ -61,6 +67,32 @@ export default React.createClass({
 
   },
 
+  ensureAtleastOneItem() {
+    if (!this.state.invoice.items.length || this.state.invoice.items[this.state.invoice.items.length - 1].getText()) {
+      this.state.invoice.items.push(new InvoiceItem());
+    }
+
+    this.setState(this.state);
+  },
+
+  handleItemChange(field, index, e) {
+    this.state.invoice.items[index][field] = e.target.value;
+
+    if (this.state.invoice.items.length == index + 1) {
+      this.state.invoice.items.push(new InvoiceItem());
+    }
+
+    this.setState(this.state);
+
+    this.ensureAtleastOneItem();
+  },
+
+  handleDeleteItem(index, e) {
+    this.state.invoice.items.splice(index, 1);
+    this.setState(this.state);
+    this.ensureAtleastOneItem();
+  },
+
   handleAddressChange(field, e) {
     this.state.invoice.address[field] = e.target.value;
     this.setState(this.state);
@@ -77,6 +109,58 @@ export default React.createClass({
     Action.update_invoice(
       this.state.invoice
     )
+  },
+
+  onItemDragStart(e) {
+
+    this.over = null;
+    this.nodePlacement = null;
+
+    this.dragged = e.currentTarget;
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData("text/html", e.currentTarget);
+  },
+
+  onItemDragEnd(e) {
+
+    if (!this.over || !this.nodePlacement) {
+      return;
+    }
+
+    this.dragged.style.display = "block";
+    this.dragged.parentNode.removeChild(placeholder);
+
+    // Update state
+    var from = Number(e.target.dataset.id);
+    var to = Number(this.over.dataset.id);
+    if(from < to) to--;
+    if(this.nodePlacement == "after") to++;
+    this.state.invoice.items.splice(to, 0, this.state.invoice.items.splice(from, 1)[0]);
+    this.setState(this.state);
+
+    $(e.target).parent('.items').find('.item').css('opacity', 1);
+  },
+
+  onItemDragOver(e) {
+    e.preventDefault();
+
+    if(e.target.className != "item") return;
+
+    this.dragged.style.opacity = "0.5"
+    this.over = e.target;
+
+    var relY = e.pageY - $(this.over).offset().top;
+    var height = this.over.offsetHeight / 4;
+
+    var parent = e.target.parentNode;
+
+    if (relY >= height) {
+      this.nodePlacement = "after";
+      parent.insertBefore(placeholder, e.target);
+    } else {
+      this.nodePlacement = "before";
+      parent.insertBefore(placeholder, e.target.nextElementSibling);
+    }
   },
 
   render() {
@@ -160,23 +244,25 @@ export default React.createClass({
                   <input type="text" className="form-control" value={this.state.invoice.address.country} onChange={this.handleAddressChange.bind(this, 'country')} />
                 </div>
 
+                <div className="items" onDragOver={this.onItemDragOver}>
                 { this.state.invoice.getItems().map(function(item, i) {
-                    return <div key={i} draggable="true" style={{position: "relative"}}>
+                    return <div className="item" draggable="true" style={{position: "relative"}} key={item.key} data-id={i} onDragEnd={this.onItemDragEnd} onDragStart={this.onItemDragStart}>
                       <hr/>
-                      <button style={{position: 'absolute', right: 0}} type="button" className="btn btn-danger">
+                      <button style={{position: 'absolute', right: 0}} type="button" className="btn btn-danger" onClick={this.handleDeleteItem.bind(this, i)}>
                         x
                       </button>
                       <div className="form-group form-inline">
                         <label style={{marginRight:"15px"}}>Anzahl</label>
-                        <input style={{width:"80px"}} placeholder="1" type="text" className="form-control" value={item.getQuantity()} />
+                        <input style={{width:"80px"}} placeholder="1" type="text" className="form-control" value={item.getQuantity()} onChange={this.handleItemChange.bind(this, 'quantity', i)} />
                         <label style={{marginRight:"15px", marginLeft: "25px"}}>Kosten</label>
-                        <input placeholder="Kosten" type="text" className="form-control" value={item.getCost()} />
+                        <input placeholder="Kosten" type="text" className="form-control" value={item.getCost()} onChange={this.handleItemChange.bind(this, 'cost', i)} />
                       </div>
                       <div className="form-group">
-                        <textarea rows="3" placeholder="Text" className="form-control" value={item.getText()} />
+                        <textarea rows="3" placeholder="Text" className="form-control" value={item.getText()} onChange={this.handleItemChange.bind(this, 'text', i)} />
                       </div>
                     </div>
                 }.bind(this))}
+                </div>
 
               </form>
 
