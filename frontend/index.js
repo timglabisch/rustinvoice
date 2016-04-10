@@ -12,8 +12,9 @@ render((
        <Route path="/" component={App}>
          <Route path="/customers" component={Customers}/>
          <Route path="/customer" component={Customer}/>
-         <Route path="/invoice" component={Invoice}/>
          <Route path="/customer/:uuid" component={Customer}/>
+         <Route path="/invoice" component={Invoice}/>
+         <Route path="/invoice/:uuid" component={Invoice}/>
        </Route>
      </Router>
   </div>

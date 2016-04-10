@@ -3,15 +3,16 @@ import InvoiceItem from './InvoiceItem'
 
 export default class {
 
-  constructor() {
-    this.address = new Address();
-    this.number = null;
-    this.date = null;
-    this.items = [
-      new InvoiceItem(),
-      new InvoiceItem(),
-      new InvoiceItem()
-    ];
+  constructor(
+    number = null,
+    address = new Address(),
+    date = null,
+    items = [ new InvoiceItem()]
+  ) {
+    this.number = number;
+    this.address = address;
+    this.date = date;
+    this.items = items;
   }
 
   getItems() {

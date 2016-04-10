@@ -1,5 +1,7 @@
 import Reflux from "reflux";
 import Action from './../action/Action'
+import InvoiceItem from './../dto/InvoiceItem'
+import Invoice from './../dto/Invoice'
 
 
 export default Reflux.createStore({
@@ -15,8 +17,6 @@ export default Reflux.createStore({
     },
 
     on_create_invoice: function(txid, invoice) {
-
-      debugger;
 
       if (!txid) {
         console.log("missing transaction id");
@@ -107,12 +107,25 @@ export default Reflux.createStore({
         method: 'GET',
         contentType: 'application/json; charset=utf-8',
         cache: false
-      }).done(function(invoice) {
+      }).done(function(data) {
         this.logs[uuid].state = "loading_success"
-        this.invoices[uuid] = invoice;
+        var items = data.items.map(function(d) {
+          return new InvoiceItem(
+            d.quantity,
+            d.text,
+            d.cost
+          )
+        });
+        this.invoices[uuid] = new Invoice(
+          data.number,
+          data.address,
+          data.date,
+          items
+        );
       }.bind(this)).fail(function() {
         this.logs[uuid].state = "loading_failed"
       }.bind(this)).complete(function() {
+        console.log(this.invoices[uuid]);
         this.trigger()
       }.bind(this));
     },

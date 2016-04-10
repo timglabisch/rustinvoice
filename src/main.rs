@@ -181,6 +181,18 @@ fn main() {
         ).expect("serialize invoice created")
     });
 
+    server.get("/invoices/:uuid", middleware! { |request, mut response|
+        response.set(MediaType::Json);
+        response.headers_mut().set(AccessControlAllowOrigin::Any);
+
+        let api_invoice_id_result = InvoiceService::get_by_id(
+            &request.param("uuid").expect("get without uuid").to_string()
+        );
+
+        let api_invoice : ApiInvoice = api_invoice_id_result.into();
+
+        serde_json::to_string(&api_invoice).expect("unserialize invoices")
+    });
 
     server.listen("127.0.0.1:6767");
 }

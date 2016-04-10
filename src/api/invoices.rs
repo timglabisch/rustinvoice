@@ -3,6 +3,8 @@ use entity::invoice::Invoice;
 use entity::invoice::InvoiceItem;
 use es::search::SearchResult;
 use es::search::SearchResultHit;
+use std::convert::From;
+use es::id::IdResult;
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone)]
 pub struct ApiInvoices {
@@ -47,4 +49,20 @@ pub struct ApiInvoiceItem {
     pub quantity : i32,
     pub text : String,
     pub cost : i32
+}
+
+impl From<IdResult<Invoice>> for ApiInvoice {
+    fn from(id_result : IdResult<Invoice>) -> ApiInvoice {
+        ApiInvoice {
+            uuid: id_result._id,
+            address : id_result._source.address,
+            items : id_result._source.items.iter().map(|s : &InvoiceItem| {
+                ApiInvoiceItem {
+                    quantity: s.quantity.clone(),
+                    text: s.text.clone(),
+                    cost: s.cost.clone()
+                }
+            }).collect()
+        }
+    }
 }

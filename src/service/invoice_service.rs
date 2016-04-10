@@ -5,6 +5,7 @@ use serde_json;
 use entity::invoice::Invoice;
 use es::search::SearchResult;
 use es::create::CreateResult;
+use es::id::IdResult;
 use std::io::Read;
 
 impl InvoiceService {
@@ -33,6 +34,19 @@ impl InvoiceService {
             .body(&data)
             .send()
             .expect("sending invoice update to elastic");
+    }
+
+    pub fn get_by_id(s : &String) -> IdResult<Invoice> {
+        let mut res = Client::new()
+            .get(&(format!("http://192.168.0.79:9200/invoice/foo/{}", s).to_string()))
+            .send()
+            .expect("sending get to elastic");
+
+        let mut body = String::new();
+        res.read_to_string(&mut body).unwrap();
+
+        let es_res = serde_json::from_str::<IdResult<Invoice>>(&body).expect("parsing es invoice id result");
+        es_res
     }
 
     pub fn all_invoices() -> SearchResult<Invoice> {
