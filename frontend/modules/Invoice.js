@@ -248,17 +248,17 @@ export default React.createClass({
                 { this.state.invoice.getItems().map(function(item, i) {
                     return <div className="item" draggable="true" style={{position: "relative"}} key={item.key} data-id={i} onDragEnd={this.onItemDragEnd} onDragStart={this.onItemDragStart}>
                       <hr/>
-                      <button style={{position: 'absolute', right: 0}} type="button" className="btn btn-danger" onClick={this.handleDeleteItem.bind(this, i)}>
+                      <button tabIndex={i+102} style={{position: 'absolute', right: 0}} type="button" className="btn btn-danger" onClick={this.handleDeleteItem.bind(this, i)}>
                         x
                       </button>
                       <div className="form-group form-inline">
                         <label style={{marginRight:"15px"}}>Anzahl</label>
-                        <input style={{width:"80px"}} placeholder="1" type="text" className="form-control" value={item.getQuantity()} onChange={this.handleItemChange.bind(this, 'quantity', i)} />
+                        <input tabIndex={i+100} style={{width:"80px"}} placeholder="1" type="text" className="form-control" value={item.getQuantity()} onChange={this.handleItemChange.bind(this, 'quantity', i)} />
                         <label style={{marginRight:"15px", marginLeft: "25px"}}>Kosten</label>
-                        <input placeholder="Kosten" type="text" className="form-control" value={item.getCost()} onChange={this.handleItemChange.bind(this, 'cost', i)} />
+                        <input tabIndex={i+101} placeholder="Kosten" type="text" className="form-control" value={item.getCost()} onChange={this.handleItemChange.bind(this, 'cost', i)} />
                       </div>
                       <div className="form-group">
-                        <textarea rows="3" placeholder="Text" className="form-control" value={item.getText()} onChange={this.handleItemChange.bind(this, 'text', i)} />
+                        <textarea tabIndex={i+10} rows="3" placeholder="Text" className="form-control" value={item.getText()} onChange={this.handleItemChange.bind(this, 'text', i)} />
                       </div>
                     </div>
                 }.bind(this))}
@@ -268,9 +268,9 @@ export default React.createClass({
 
               {(() => {
                 if (this.state.invoice_uuid) {
-                  return <input type="submit" value="Speichern" onClick={this.handleUpdate} />
+                  return <input tabIndex={this.state.invoice.getItems().length + 11} type="submit" value="Speichern" onClick={this.handleUpdate} />
                 } else {
-                  return <input type="submit" value="Anlegen" onClick={this.handleCreate} />
+                  return <input tabIndex={this.state.invoice.getItems().length + 11} type="submit" value="Anlegen" onClick={this.handleCreate} />
                 }
               })()}
 
