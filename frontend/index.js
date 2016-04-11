@@ -3,6 +3,7 @@ import { render } from 'react-dom'
 import App from './modules/App'
 import Customer from './modules/Customer'
 import Invoice from './modules/Invoice'
+import Invoices from './modules/Invoices'
 import Customers from './modules/Customers'
 import { Router, Route, hashHistory, Link } from 'react-router'
 
@@ -13,6 +14,7 @@ render((
          <Route path="/customers" component={Customers}/>
          <Route path="/customer" component={Customer}/>
          <Route path="/customer/:uuid" component={Customer}/>
+         <Route path="/invoices" component={Invoices}/>
          <Route path="/invoice" component={Invoice}/>
          <Route path="/invoice/:uuid" component={Invoice}/>
        </Route>

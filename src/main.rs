@@ -194,5 +194,16 @@ fn main() {
         serde_json::to_string(&api_invoice).expect("unserialize invoices")
     });
 
+    server.delete("/invoices/:uuid", middleware! { |request, mut response|
+        response.headers_mut().set(AccessControlAllowOrigin::Any);
+
+        InvoiceService::delete(
+            &request.param("uuid").expect("delete invoice without uuid").to_string()
+        );
+
+        ""
+    });
+
+
     server.listen("127.0.0.1:6767");
 }

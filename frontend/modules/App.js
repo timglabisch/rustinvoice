@@ -27,6 +27,7 @@ export default React.createClass({
            <li className="active"><a href="#">Overview <span className="sr-only">(current)</span></a></li>
            <li><Link to="/customers">Kunden</Link></li>
            <li><Link to="/customer">Kunden anlegen</Link></li>
+           <li><Link to="/invoices">Rechnungen</Link></li>
            <li><Link to="/invoice">Rechnung anlegen</Link></li>
          </ul>
        </div>

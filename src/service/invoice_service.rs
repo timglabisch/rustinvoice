@@ -63,4 +63,11 @@ impl InvoiceService {
         serde_json::from_str::<SearchResult<Invoice>>(&body).expect("parsing es invoice result")
     }
 
+    pub fn delete(s: &String) {
+        Client::new()
+            .delete(&(format!("http://192.168.0.79:9200/invoice/foo/{}?refresh=true", s).to_string()))
+            .send()
+            .expect("sending invoice delete to elastic");
+    }
+
 }
