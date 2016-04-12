@@ -3,6 +3,7 @@ import Invoice from './dto/Invoice'
 import InvoiceItem from './dto/InvoiceItem'
 import InvoiceStore from './store/InvoiceStore'
 import Action from './action/Action'
+import Autocomplete from './Autocomplete'
 
 var placeholder = document.createElement("div");
 placeholder.innerHTML = "Hierher verschieben.";
@@ -208,6 +209,7 @@ export default React.createClass({
                 </div>
 
                 <h3>Kundendaten</h3>
+                <Autocomplete/>
 
                 <div className="form-group">
                   <label>Vorname</label>

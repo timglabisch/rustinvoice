@@ -15,7 +15,7 @@ impl CustomerService {
         let data = serde_json::to_string(customer).expect("serialize customer to string");
 
         let mut res = Client::new()
-            .post(&(format!("http://192.168.0.79:9200/customer/foo/{}", uuid)).to_string())
+            .post(&(format!("http://192.168.0.79:9200/rustinvoice/customer/{}", uuid)).to_string())
             .body(&data)
             .send()
             .expect("sending update to elastic");
@@ -25,7 +25,7 @@ impl CustomerService {
         let data = serde_json::to_string(customer).expect("serialize customer to string");
 
         let mut res = Client::new()
-            .post("http://192.168.0.79:9200/customer/foo")
+            .post("http://192.168.0.79:9200/rustinvoice/customer")
             .body(&data)
             .send()
             .expect("sending post to elastic");
@@ -39,14 +39,14 @@ impl CustomerService {
 
     pub fn delete(s: &String) {
         Client::new()
-            .delete(&(format!("http://192.168.0.79:9200/customer/foo/{}?refresh=true", s).to_string()))
+            .delete(&(format!("http://192.168.0.79:9200/rustinvoice/customer/{}?refresh=true", s).to_string()))
             .send()
             .expect("sending delete to elastic");
     }
 
     pub fn get_by_id(s : &String) -> IdResult<Customer> {
         let mut res = Client::new()
-            .get(&(format!("http://192.168.0.79:9200/customer/foo/{}", s).to_string()))
+            .get(&(format!("http://192.168.0.79:9200/rustinvoice/customer/{}", s).to_string()))
             .send()
             .expect("sending get to elastic");
 
@@ -60,7 +60,7 @@ impl CustomerService {
     pub fn all_customers() -> SearchResult<Customer> {
 
         let mut res = Client::new()
-            .post("http://192.168.0.79:9200/customer/foo/_search")
+            .post("http://192.168.0.79:9200/rustinvoice/customer/_search")
             .body(&r#"{"query":{"match_all":{}}}"#.to_string())
             .send()
             .expect("sending to elastic");

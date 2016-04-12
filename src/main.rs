@@ -20,15 +20,20 @@ use service::customer_service::CustomerService;
 use service::invoice_service::InvoiceService;
 mod es;
 mod api;
+mod mapping;
 use api::customers::ApiCustomers;
 use api::customers::ApiCustomer;
 use api::invoices::ApiInvoice;
 use api::invoices::ApiInvoices;
 use api::ApiCreated;
 use hyper::method::Method;
+use mapping::EsMapping;
 
 
 fn main() {
+
+    EsMapping::update_invoice();
+
     let mut server = Nickel::new();
 
     server.options("**", middleware! { |_, mut response|

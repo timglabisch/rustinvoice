@@ -25,10 +25,22 @@ export default React.createClass({
        <div className="col-sm-3 col-md-2 sidebar">
          <ul className="nav nav-sidebar">
            <li className="active"><a href="#">Overview <span className="sr-only">(current)</span></a></li>
-           <li><Link to="/customers">Kunden</Link></li>
-           <li><Link to="/customer">Kunden anlegen</Link></li>
-           <li><Link to="/invoices">Rechnungen</Link></li>
-           <li><Link to="/invoice">Rechnung anlegen</Link></li>
+           <li style={{position: 'relative'}}>
+             <Link to="/customer" style={{zIndex: 199, position: 'absolute', right: 15, marginTop:3, padding:0}}>
+               <div className="btn btn-success">
+                 +
+               </div>
+             </Link>
+             <Link to="/customers">Kunden</Link>
+           </li>
+           <li>
+            <Link to="/invoice" style={{zIndex: 199, position: 'absolute', right: 15, marginTop:3, padding:0}}>
+             <div className="btn btn-success">
+               +
+             </div>
+            </Link>
+            <Link to="/invoices">Rechnungen</Link>
+           </li>
          </ul>
        </div>
        <div className="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
