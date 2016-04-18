@@ -4,6 +4,7 @@ import InvoiceItem from './dto/InvoiceItem'
 import InvoiceStore from './store/InvoiceStore'
 import Action from './action/Action'
 import Autocomplete from './Autocomplete'
+import PInput from './layout/PInput'
 
 var placeholder = document.createElement("div");
 placeholder.innerHTML = "Hierher verschieben.";
@@ -213,7 +214,10 @@ export default React.createClass({
 
                 <div className="form-group">
                   <label>Vorname</label>
-                  <input type="text" className="form-control" value={this.state.invoice.address.first_name} onChange={this.handleAddressChange.bind(this, 'first_name')} />
+                  <PInput
+                    value={this.state.invoice.address.first_name}
+                    onChange={this.handleAddressChange.bind(this, 'first_name')}
+                    />
                 </div>
 
                 <div className="form-group">
