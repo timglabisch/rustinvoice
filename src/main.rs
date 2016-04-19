@@ -8,7 +8,7 @@ extern crate serde_json;
 extern crate unicase;
 
 use std::collections::HashMap;
-use nickel::{Nickel, HttpRouter, MediaType};
+use nickel::{Nickel, HttpRouter, MediaType, QueryString};
 mod entity;
 use entity::customer::Customer;
 use entity::invoice::Invoice;
@@ -18,6 +18,7 @@ use std::io::Read;
 mod service;
 use service::customer_service::CustomerService;
 use service::invoice_service::InvoiceService;
+use service::suggest_service::SuggestService;
 mod es;
 mod api;
 mod mapping;
@@ -28,7 +29,6 @@ use api::invoices::ApiInvoices;
 use api::ApiCreated;
 use hyper::method::Method;
 use mapping::EsMapping;
-
 
 fn main() {
 
@@ -207,6 +207,19 @@ fn main() {
         );
 
         ""
+    });
+
+    server.get("/suggest", middleware! { |request, mut response|
+        response.set(MediaType::Json);
+        response.headers_mut().set(AccessControlAllowOrigin::Any);
+
+        serde_json::to_string(
+            &ApiCustomers::new(
+                &SuggestService::getCustomerCompletion(
+                    &request.query().get("query").expect("query param on suggestion is missing").to_string()
+                )
+            )
+        ).expect("serialize customers")
     });
 
 
