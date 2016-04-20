@@ -13,9 +13,6 @@ export default React.createClass({
          <a className="navbar-brand" href="#">Rustinvoice</a>
        </div>
        <div id="navbar" className="navbar-collapse collapse">
-         <form className="navbar-form navbar-right">
-           <input type="text" className="form-control" placeholder="Search..."/>
-         </form>
        </div>
      </div>
    </nav>

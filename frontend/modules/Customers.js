@@ -45,6 +45,13 @@ export default React.createClass({
 
   render() {
     return <div>
+
+        <div style={{margin: "80px auto", width: 470}}>
+          <div className="input-group input-group-lg">
+            <input type="text" style={{width:450}} className="form-control" placeholder="Suche nach Kunden ..." aria-describedby="sizing-addon1"/>
+          </div>
+        </div>
+
         { this.state.loading && <div className="alert alert-info" role="alert">Kunden werden momenten aktualisiert</div> }
         { this.state.deleting_failed && <div className="alert alert-danger" role="alert">Beim Löschen ist ein Fehler aufgetreten</div> }
 
