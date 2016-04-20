@@ -17,7 +17,7 @@ impl SuggestService {
                    "path": "address",
                    "query": {
                        "multi_match": {
-                          "query": ""#, &(query.to_string()), r#"",
+                          "query": ""#, &(query.to_string().replace("\\", "\\\\").replace("\"", "\\\"")), r#"",
                           "fields": [
                               "address.country.autocomplete",
                               "address.street.autocomplete",
@@ -42,8 +42,6 @@ impl SuggestService {
 
         let mut body = String::new();
         res.read_to_string(&mut body).unwrap();
-
-        println!("q: {}", q);
 
         serde_json::from_str::<SearchResult<Customer>>(&body).expect("parsing query result")
     }

@@ -11,7 +11,7 @@ export default Reflux.createActions([
   "deleted_customer",
   "load_customer",
   "update_customer",
-  
+
   "create_invoice",
   "created_invoice",
   "created_invoice_failed",
@@ -19,5 +19,7 @@ export default Reflux.createActions([
   "delete_invoice",
   "deleted_invoice",
   "load_invoice",
-  "update_invoice"
+  "update_invoice",
+
+  "autocomplete_customer"
 ]);

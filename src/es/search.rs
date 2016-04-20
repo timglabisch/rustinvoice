@@ -22,7 +22,6 @@ pub struct SearchResultShards {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct SearchResultHits<T> where T : Clone {
     pub total: i32,
-    pub max_score: i32,
     pub hits: Vec<SearchResultHit<T>>
 }
 

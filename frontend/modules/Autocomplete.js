@@ -2,16 +2,19 @@ import React from 'react'
 import CustomerSuggest from './autocomplete/CustomerSuggest';
 import Customer from './dto/Customer';
 import Loader from './Loader';
+import AutocompleteCustomerStore from './store/AutocompleteCustomerStore'
+import Action from './action/Action'
 
 export default React.createClass({
 
   componentDidMount: function() {
     this.in_input = false;
     this.mouse_on_autocomplete = false;
+    this.unsubscribe = AutocompleteCustomerStore.listen(this.onAutocompleteCustomerStoreChanged);
   },
 
   componentWillUnmount: function() {
-
+    this.unsubscribe();
   },
 
   onChangeInInput(v) {
@@ -90,30 +93,34 @@ export default React.createClass({
     this.onSelect(this.state.completions[this.state.activeIndex - 1]);
   },
 
+  onAutocompleteCustomerStoreChanged() {
+    this.setState({
+      completions: AutocompleteCustomerStore.getCompletions(),
+      loading: AutocompleteCustomerStore.isLoading()
+    })
+  },
+
   onChangeQuery(e) {
 
-    var completions = [
-      "foo",
-      "fußball",
-      "bar",
-      "bahn"
-    ].filter(function(v) {
-      return v.indexOf(e.target.value) !== -1
-    });
+    this.setState({ query: e.target.value });
+    var current_value = e.target.value;
 
-    this.setState({
-      completions: completions,
-      query: e.target.value
-    })
+    window.setTimeout(function() {
+      if (current_value == this.state.query) {
+        Action.autocomplete_customer(this.state.query);
+      }
+    }.bind(this), 250);
+
   },
 
   getInitialState() {
      return {
        activeIndex: 0,
        previewIndex: 0,
+       loading: AutocompleteCustomerStore.isLoading(),
        open: false,
        query: "",
-       completions: []
+       completions: AutocompleteCustomerStore.getCompletions()
     };
   },
 
@@ -169,7 +176,7 @@ export default React.createClass({
               />
             </div>
             <div style={{float:"left", paddingLeft: "10px"}}>
-              <Loader loading={1}/>
+              <Loader loading={this.state.loading}/>
             </div>
             <div style={{clear:"both"}}></div>
         </div>
@@ -196,7 +203,7 @@ export default React.createClass({
 
               return <li
                   onClick={this.onClick.bind(this, completion)}
-                  key={completion}
+                  key={completion.uuid}
                   style={{paddingTop: 10, paddingBottom: 10, display: "block"}}
                   onMouseLeave={this.onHoverCompletion.bind(this, completion, false, i)}
                   onMouseEnter={this.onHoverCompletion.bind(this, completion, true, i)}
