@@ -27,7 +27,8 @@ export default React.createClass({
      txid : Math.random(),
      mounted_since: new Date,
      invoice_uuid : nextProps.params.uuid ? nextProps.params.uuid : null,
-     invoice: nextProps.params.uuid ? InvoiceStore.getInvoice(nextProps.params.uuid) : new Invoice()
+     invoice: nextProps.params.uuid ? InvoiceStore.getInvoice(nextProps.params.uuid) : new Invoice(),
+     completion: null
    })
   },
 
@@ -85,7 +86,6 @@ export default React.createClass({
     }
 
     this.setState(this.state);
-
     this.ensureAtleastOneItem();
   },
 
@@ -165,6 +165,24 @@ export default React.createClass({
     }
   },
 
+  onHoverAutocomplete(hover, completion) {
+    this.setState({completion: hover ? completion : null});
+  },
+
+  onSelectAutocomplete(completion) {
+    this.state.invoice.address = completion.address;
+    this.state.completion = null;
+    this.setState(this.state);
+  },
+
+  getAddressCompletion(field) {
+    if (!this.state.completion) {
+      return null;
+    }
+
+    return this.state.completion.address[field];
+  },
+
   render() {
 
     if (this.state.invoice_uuid && !this.state.invoice && !this.state.saving_failed) {
@@ -209,45 +227,76 @@ export default React.createClass({
                   <input type="date" className="form-control" value={this.state.invoice.date} onChange={this.handleChange.bind(this, 'date')} />
                 </div>
 
+                <div style={{position: 'absolute', marginLeft: 200, marginTop:8}}>
+                  <Autocomplete
+                    onSelect={this.onSelectAutocomplete}
+                    onHover={this.onHoverAutocomplete}
+                  />
+                </div>
                 <h3>Kundendaten</h3>
-                <Autocomplete/>
+
 
                 <div className="form-group">
                   <label>Vorname</label>
                   <PInput
                     value={this.state.invoice.address.first_name}
                     onChange={this.handleAddressChange.bind(this, 'first_name')}
-                    />
+                    replaceText={this.getAddressCompletion('first_name')}
+                  />
                 </div>
 
                 <div className="form-group">
                   <label>Nachname</label>
-                  <input type="text" className="form-control" value={this.state.invoice.address.last_name} onChange={this.handleAddressChange.bind(this, 'last_name')} />
+                  <PInput
+                    value={this.state.invoice.address.last_name}
+                    onChange={this.handleAddressChange.bind(this, 'last_name')}
+                    replaceText={this.getAddressCompletion('last_name')}
+                  />
                 </div>
 
                 <div className="form-group">
                   <label>Firma</label>
-                  <input type="text" className="form-control" value={this.state.invoice.address.company_name} onChange={this.handleAddressChange.bind(this, 'company_name')} />
+                  <PInput
+                    value={this.state.invoice.address.company_name}
+                    onChange={this.handleAddressChange.bind(this, 'company_name')}
+                    replaceText={this.getAddressCompletion('company_name')}
+                  />
                 </div>
 
                 <div className="form-group">
                   <label>Straße</label>
-                  <input type="text" className="form-control" value={this.state.invoice.address.street} onChange={this.handleAddressChange.bind(this, 'street')}/>
+                  <PInput
+                    value={this.state.invoice.address.street}
+                    onChange={this.handleAddressChange.bind(this, 'street')}
+                    replaceText={this.getAddressCompletion('street')}
+                  />
                 </div>
 
                 <div className="form-group">
                   <label>Hausnummer</label>
-                  <input type="text" className="form-control" value={this.state.invoice.address.street_number} onChange={this.handleAddressChange.bind(this, 'street_number')} />
+                  <PInput
+                    value={this.state.invoice.address.street_number}
+                    onChange={this.handleAddressChange.bind(this, 'street_number')}
+                    replaceText={this.getAddressCompletion('street_number')}
+                  />
                 </div>
 
                 <div className="form-group">
                   <label>Plz</label>
-                  <input type="text" className="form-control" value={this.state.invoice.address.zip} onChange={this.handleAddressChange.bind(this, 'zip')} />
+                  <PInput
+                    value={this.state.invoice.address.zip}
+                    onChange={this.handleAddressChange.bind(this, 'zip')}
+                    replaceText={this.getAddressCompletion('zip')}
+                  />
                 </div>
 
                 <div className="form-group">
                   <label>Land</label>
-                  <input type="text" className="form-control" value={this.state.invoice.address.country} onChange={this.handleAddressChange.bind(this, 'country')} />
+                  <PInput
+                    value={this.state.invoice.address.country}
+                    onChange={this.handleAddressChange.bind(this, 'country')}
+                    replaceText={this.getAddressCompletion('country')}
+                  />
                 </div>
 
                 <div className="items" onDragOver={this.onItemDragOver}>

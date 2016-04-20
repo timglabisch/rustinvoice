@@ -32,7 +32,6 @@ export default React.createClass({
   },
 
   onKeyDown(e) {
-
     if(e.keyCode == 38) {
       e.preventDefault();
       return this.onKeyDownUp();
@@ -55,34 +54,28 @@ export default React.createClass({
   },
 
   onKeyDownUp() {
-
     if (!this.state.activeIndex) {
+      this.onHoverCompletion(null, false, 0);
       return;
     }
 
-    this.setState({
-      activeIndex: --this.state.activeIndex
-    })
+    this.onHoverCompletion(this.state.completions[this.state.activeIndex-2], true, this.state.activeIndex);
+    this.setState({ activeIndex: --this.state.activeIndex})
   },
 
   onKeyDownDown() {
-
     this.handleOpenCloseState();
 
     if (this.state.completions.length == this.state.activeIndex) {
       return;
     }
 
-    this.setState({
-      activeIndex: ++this.state.activeIndex
-    })
+    this.onHoverCompletion(this.state.completions[this.state.activeIndex], true, this.state.activeIndex);
+    this.setState({ activeIndex: ++this.state.activeIndex })
   },
 
   onKeyDownEscape() {
-    this.setState({
-      activeIndex: 0,
-      open: false
-    })
+    this.setState({ activeIndex: 0, open: false });
   },
 
   onKeyDownEnter() {
@@ -101,7 +94,6 @@ export default React.createClass({
   },
 
   onChangeQuery(e) {
-
     this.setState({ query: e.target.value });
     var current_value = e.target.value;
 
@@ -110,7 +102,6 @@ export default React.createClass({
         Action.autocomplete_customer(this.state.query);
       }
     }.bind(this), 250);
-
   },
 
   getInitialState() {
@@ -124,17 +115,20 @@ export default React.createClass({
     };
   },
 
-  onHover(completion) {
-    console.log("hover", completion);
-  },
-
   onSelect(completion) {
-    console.log("select", completion);
+    if (!this.props.onSelect) {
+      return;
+    }
+
+    this.props.onSelect(completion);
+    this.setState({ activeIndex: 0, open: false });
   },
 
   onHoverCompletion(completion, hover, index) {
     this.setState({previewIndex: hover ? index : 0});
-    !hover || console.log("hover", completion);
+    if (this.props.onHover) {
+      this.props.onHover(hover, completion);
+    }
   },
 
   onClick(completion, e) {
@@ -168,6 +162,7 @@ export default React.createClass({
           <div style={{float:"left"}}>
               <input type="text"
                 autoComplete="off"
+                placeholder="Suche"
                 value={this.state.query}
                 onChange={this.onChangeQuery}
                 onKeyDown={this.onKeyDown}
@@ -204,7 +199,7 @@ export default React.createClass({
               return <li
                   onClick={this.onClick.bind(this, completion)}
                   key={completion.uuid}
-                  style={{paddingTop: 10, paddingBottom: 10, display: "block"}}
+                  style={{paddingTop: 10, paddingBottom: 10, display: "block", cursor: 'pointer'}}
                   onMouseLeave={this.onHoverCompletion.bind(this, completion, false, i)}
                   onMouseEnter={this.onHoverCompletion.bind(this, completion, true, i)}
                 >
