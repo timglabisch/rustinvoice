@@ -15,7 +15,10 @@ impl EsMapping {
                 "analysis" : {
                     "analyzer" : {
                         "basic_autocomplete_analyzer" : {
-                            "tokenizer" : "basic_autocomplete_tokenizer"
+                            "tokenizer" : "basic_autocomplete_tokenizer",
+                            "filter" : [
+                                "lowercase"
+                            ]
                         }
                     },
                     "tokenizer" : {

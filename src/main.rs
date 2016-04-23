@@ -21,6 +21,7 @@ use service::invoice_service::InvoiceService;
 use service::suggest_service::SuggestService;
 mod es;
 mod api;
+mod dto;
 mod mapping;
 use api::customers::ApiCustomers;
 use api::customers::ApiCustomer;
@@ -29,6 +30,7 @@ use api::invoices::ApiInvoices;
 use api::ApiCreated;
 use hyper::method::Method;
 use mapping::EsMapping;
+use dto::ListContext;
 
 fn main() {
 
@@ -109,13 +111,18 @@ fn main() {
         ""
     });
 
-    server.get("/customers", middleware! { |_, mut response|
+    server.get("/customers", middleware! { |request, mut response|
         response.set(MediaType::Json);
         response.headers_mut().set(AccessControlAllowOrigin::Any);
 
+        let listContext = ListContext::new(
+            request.query().get("q").unwrap_or("").to_string(),
+            request.query().get("page").unwrap_or("0").to_string().parse::<i32>().unwrap_or(0).clone()
+        );
+
         serde_json::to_string(
             &ApiCustomers::new(
-                &CustomerService::all_customers()
+                &CustomerService::all_customers(listContext)
             )
         ).expect("serialize customers")
     });

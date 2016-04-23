@@ -4,6 +4,7 @@ import CustomersStore from './store/CustomersStore'
 import CustomerStore from './store/CustomerStore'
 import Action from './action/Action'
 import { Link } from 'react-router'
+import Loader from './Loader'
 
 export default React.createClass({
 
@@ -21,7 +22,7 @@ export default React.createClass({
   getInitialState() {
      return {
        mounted_since: new Date,
-       loading: CustomersStore.isLoading(),
+       loading: 1,
        customers: CustomersStore.getCustomers()
      };
   },
@@ -43,16 +44,37 @@ export default React.createClass({
     Action.delete_customer(customer);
   },
 
+  onFilterCustomers(e) {
+    this.setState({ query: e.target.value });
+    var current_value = e.target.value;
+
+    this.setState({loading: 1});
+
+    window.setTimeout(function() {
+      if (current_value == this.state.query) {
+        Action.require_customers(current_value);
+      }
+    }.bind(this), 250);
+  },
+
   render() {
     return <div>
 
         <div style={{margin: "80px auto", width: 470}}>
+          <div style={{position: 'absolute', marginLeft: -25, marginTop:15}}>
+            <Loader loading={this.state.loading}/>
+          </div>
           <div className="input-group input-group-lg">
-            <input type="text" style={{width:450}} className="form-control" placeholder="Suche nach Kunden ..." aria-describedby="sizing-addon1"/>
+            <input
+              type="text"
+              style={{width:450}}
+              className="form-control"
+              placeholder={this.state.loadig ? "Kundendaten werden geladen" : "Suche nach Kunden ..."}
+              onChange={this.onFilterCustomers}
+            />
           </div>
         </div>
 
-        { this.state.loading && <div className="alert alert-info" role="alert">Kunden werden momenten aktualisiert</div> }
         { this.state.deleting_failed && <div className="alert alert-danger" role="alert">Beim Löschen ist ein Fehler aufgetreten</div> }
 
         { this.state.customers.map(function(customer) {

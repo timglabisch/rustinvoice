@@ -7,6 +7,9 @@ use es::search::SearchResult;
 use es::id::IdResult;
 use es::create::CreateResult;
 use std::io::Read;
+use dto::ListContext;
+use serde_json::builder::ObjectBuilder;
+use serde::ser;
 
 
 impl CustomerService {
@@ -57,11 +60,60 @@ impl CustomerService {
         es_res
     }
 
-    pub fn all_customers() -> SearchResult<Customer> {
+    fn get_all_customers_query(context : &ListContext) -> String {
+
+        println!("{}, {}", context.query, context.query.len());
+
+        let value = if context.query.len() == 0 {
+            ObjectBuilder::new().insert_object("query", |b| {
+                b.insert_object("match_all", |b| {
+                    b
+                })
+            }).unwrap()
+        } else {
+            ObjectBuilder::new().insert_object("query", |b| {
+                b.insert_object("nested", |b| {
+                    b.insert("path", "address")
+                     .insert_object("query", |b| {
+                         b.insert_object("multi_match", |b| {
+                            b.insert("query", &context.query)
+                             .insert("fuzziness", 1.1)
+                             .insert_array("fields", |b| {
+                                b
+                                 .push("address.country.analyzed^2")
+                                 .push("address.street.analyzed^10")
+                                 .push("address.street_number.analyzed^1")
+                                 .push("address.zip.analyzed^2")
+                                 .push("address.first_name.analyzed^4")
+                                 .push("address.last_name.analyzed^10")
+                                 .push("address.company_name.analyzed^10")
+
+                                 .push("address.country.autocomplete")
+                                 .push("address.street.autocomplete")
+                                 .push("address.street_number.autocomplete")
+                                 .push("address.zip.autocomplete")
+                                 .push("address.first_name.autocomplete")
+                                 .push("address.last_name.autocomplete")
+                                 .push("address.company_name.autocomplete")
+                            })
+                        })
+                    })
+                })
+            }).unwrap()
+        };
+
+        serde_json::to_string(&value).unwrap()
+    }
+
+    pub fn all_customers(context : ListContext) -> SearchResult<Customer> {
+
+        let query = Self::get_all_customers_query(&context);
+
+        println!("{}", query);
 
         let mut res = Client::new()
             .post("http://192.168.0.79:9200/rustinvoice/customer/_search")
-            .body(&r#"{"query":{"match_all":{}}}"#.to_string())
+            .body(&query)
             .send()
             .expect("sending to elastic");
 
