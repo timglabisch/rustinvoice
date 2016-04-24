@@ -5,6 +5,28 @@ import CustomerStore from './store/CustomerStore'
 import Action from './action/Action'
 import { Link } from 'react-router'
 import Loader from './Loader'
+import Infinite from 'react-infinite'
+
+var ListItem = React.createClass({
+    render: function() {
+        return <div className="infinite-list-item">
+          <div style={{position: 'relative', height: 85}}>
+            <button onClick={this.props.onDelete} style={{position: 'absolute', right: 0}} type="button" className="btn btn-danger">
+              x
+            </button>
+            <Link to={'/customer/' + this.props.customer.uuid}>
+              <div>
+                vorname: { this.props.customer.address.first_name }
+              </div>
+              <div>
+                nachname: { this.props.customer.address.last_name }
+              </div>
+            </Link>
+            <hr/>
+          </div>
+        </div>;
+    }
+});
 
 export default React.createClass({
 
@@ -23,15 +45,31 @@ export default React.createClass({
      return {
        mounted_since: new Date,
        loading: 1,
-       customers: CustomersStore.getCustomers()
+       customers: CustomersStore.getCustomers(),
+       isInfiniteLoading: false,
+       page: 0,
+       query: null
      };
+  },
+
+  handleInfiniteLoad: function() {
+    console.log("handle...");
+    this.setState({ isInfiniteLoading: true, page: ++this.state.page });
+    Action.require_customers(this.state.query, this.state.page);
+  },
+
+  elementInfiniteLoad: function() {
+      return <div className="infinite-list-item">
+          Loading...
+      </div>;
   },
 
   onStatusChange: function() {
     this.setState({
       deleting_failed: !!CustomerStore.getLogs(this.state.mounted_since, 'deleting_failed').length,
       loading: CustomersStore.isLoading(),
-      customers: CustomersStore.getCustomers()
+      customers: CustomersStore.getCustomers(),
+      isInfiniteLoading: false
     });
   },
 
@@ -77,22 +115,22 @@ export default React.createClass({
 
         { this.state.deleting_failed && <div className="alert alert-danger" role="alert">Beim Löschen ist ein Fehler aufgetreten</div> }
 
-        { this.state.customers.map(function(customer) {
-            return <div style={{position: 'relative'}} key={customer.uuid}>
-              <button onClick={this.onDelete.bind(this, customer)} style={{position: 'absolute', right: 0}} type="button" className="btn btn-danger">
-                x
-              </button>
-              <Link to={'/customer/' + customer.uuid}>
-                <div>
-                  vorname: { customer.address.first_name }
+        <Infinite elementHeight={85}
+          useWindowAsScrollContainer={true}
+          infiniteLoadBeginEdgeOffset={200}
+          onInfiniteLoad={this.handleInfiniteLoad}
+          loadingSpinnerDelegate={this.elementInfiniteLoad()}
+          isInfiniteLoading={this.state.isInfiniteLoading}
+         >
+            { this.state.customers.map(function(customer) {
+                return <div key={customer.uuid}>
+                  <ListItem
+                      customer={customer}
+                      onDelete={this.onDelete.bind(this, customer)}
+                    />
                 </div>
-                <div>
-                  nachname: { customer.address.last_name }
-                </div>
-              </Link>
-              <hr/>
-            </div>
-        }.bind(this))}
+            }.bind(this))}
+          </Infinite>
       </div>
   }
 })

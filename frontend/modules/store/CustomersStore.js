@@ -1,6 +1,6 @@
 import Reflux from "reflux";
 import Action from './../action/Action'
-
+import Customer from './../dto/Customer'
 
 export default Reflux.createStore({
 
@@ -21,7 +21,25 @@ export default Reflux.createStore({
       return this.customers;
     },
 
-    on_load_customers: function(query = null) {
+    on_load_customers: function(query = null, page = 0) {
+
+      console.log("foo");
+
+      if (page > 0) {
+
+        this.customers = this.customers.concat([
+          new Customer(),
+          new Customer(),
+          new Customer(),
+          new Customer(),
+          new Customer()
+        ]);
+
+        console.log(page);
+
+        this.trigger();
+        return;
+      }
 
       if (query !== null) {
         this.query = query;
