@@ -117,7 +117,8 @@ fn main() {
 
         let listContext = ListContext::new(
             request.query().get("q").unwrap_or("").to_string(),
-            request.query().get("page").unwrap_or("0").to_string().parse::<i32>().unwrap_or(0).clone()
+            request.query().get("from").unwrap_or("0").to_string().parse::<i32>().unwrap_or(0).clone(),
+            request.query().get("size").unwrap_or("10").to_string().parse::<i32>().unwrap_or(0).clone()
         );
 
         serde_json::to_string(

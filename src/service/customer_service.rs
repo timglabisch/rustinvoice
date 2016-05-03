@@ -69,7 +69,10 @@ impl CustomerService {
                 b.insert_object("match_all", |b| {
                     b
                 })
-            }).unwrap()
+            })
+            .insert("from", context.from)
+            .insert("size", context.size)
+            .unwrap()
         } else {
             ObjectBuilder::new().insert_object("query", |b| {
                 b.insert_object("nested", |b| {
@@ -99,7 +102,10 @@ impl CustomerService {
                         })
                     })
                 })
-            }).unwrap()
+            })
+            .insert("from", context.from)
+            .insert("size", context.size)
+            .unwrap()
         };
 
         serde_json::to_string(&value).unwrap()

@@ -46,6 +46,7 @@ export default React.createClass({
        mounted_since: new Date,
        loading: 1,
        customers: CustomersStore.getCustomers(),
+       has_more_to_load: true,
        isInfiniteLoading: false,
        page: 0,
        query: null
@@ -53,12 +54,21 @@ export default React.createClass({
   },
 
   handleInfiniteLoad: function() {
-    console.log("handle...");
+
+    if (!this.state.has_more_to_load) {
+      return;
+    }
+
     this.setState({ isInfiniteLoading: true, page: ++this.state.page });
     Action.require_customers(this.state.query, this.state.page);
   },
 
   elementInfiniteLoad: function() {
+
+      if (!this.state.has_more_to_load) {
+          return <div className="alert alert-info" role="alert">Keine weiteren Kunden.</div>
+      }
+
       return <div className="infinite-list-item">
           Loading...
       </div>;
@@ -69,6 +79,7 @@ export default React.createClass({
       deleting_failed: !!CustomerStore.getLogs(this.state.mounted_since, 'deleting_failed').length,
       loading: CustomersStore.isLoading(),
       customers: CustomersStore.getCustomers(),
+      has_more_to_load: CustomersStore.hasMoreToLoad(),
       isInfiniteLoading: false
     });
   },

@@ -1,13 +1,15 @@
 pub struct ListContext {
     pub query : String,
-    pub page : i32
+    pub size : i32,
+    pub from : i32
 }
 
 impl ListContext {
-    pub fn new(query : String, page : i32) -> ListContext {
+    pub fn new(query : String, from : i32, size : i32) -> ListContext {
         ListContext {
             query: query,
-            page: page
+            from: from,
+            size: size
         }
     }
 }

@@ -131,7 +131,7 @@ export default Reflux.createStore({
         cache: false
       }).done(function() {
         this.logs[customer.uuid].state = "deleting_success"
-        Action.deleted_customer();
+        Action.deleted_customer(customer);
       }.bind(this)).fail(function() {
         this.logs[customer.uuid].state = "deleting_failed"
       }.bind(this)).complete(function() {
