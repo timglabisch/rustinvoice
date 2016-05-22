@@ -122,6 +122,7 @@ export default Reflux.createStore({
           data.date,
           items
         );
+        this.invoices[uuid]['uuid'] = uuid;
       }.bind(this)).fail(function() {
         this.logs[uuid].state = "loading_failed"
       }.bind(this)).complete(function() {
@@ -145,10 +146,10 @@ export default Reflux.createStore({
         method: 'DELETE',
         cache: false
       }).done(function() {
-        this.logs[invoice.uuid].state = "deleting_success"
-        Action.deleted_invoice();
+        this.logs[invoice.uuid].state = "deleting_success";
+        Action.deleted_invoice(invoice);
       }.bind(this)).fail(function() {
-        this.logs[invoice.uuid].state = "deleting_failed"
+        this.logs[invoice.uuid].state = "deleting_failed";
       }.bind(this)).complete(function() {
         this.trigger()
       }.bind(this));

@@ -1,6 +1,7 @@
 #![feature(custom_derive, plugin)]
 #![plugin(serde_macros)]
 
+
 extern crate serde;
 extern crate serde_json;
 #[macro_use] extern crate nickel;
@@ -56,9 +57,7 @@ fn main() {
         ""
     });
 
-    server.get("/", middleware! { |_, mut response|
-        response.headers_mut().set(AccessControlAllowOrigin::Any);
-
+    server.get("/", middleware! { |_, response|
         let mut data = HashMap::new();
         data.insert("name", "user");
         return response.render("src/templates/hello.tpl", &data);
@@ -115,7 +114,7 @@ fn main() {
         response.set(MediaType::Json);
         response.headers_mut().set(AccessControlAllowOrigin::Any);
 
-        let listContext = ListContext::new(
+        let list_context = ListContext::new(
             request.query().get("q").unwrap_or("").to_string(),
             request.query().get("from").unwrap_or("0").to_string().parse::<i32>().unwrap_or(0).clone(),
             request.query().get("size").unwrap_or("10").to_string().parse::<i32>().unwrap_or(0).clone()
@@ -123,7 +122,7 @@ fn main() {
 
         serde_json::to_string(
             &ApiCustomers::new(
-                &CustomerService::all_customers(listContext)
+                &CustomerService::all_customers(list_context)
             )
         ).expect("serialize customers")
     });
@@ -150,9 +149,15 @@ fn main() {
         response.set(MediaType::Json);
         response.headers_mut().set(AccessControlAllowOrigin::Any);
 
+		let list_context = ListContext::new(
+            request.query().get("q").unwrap_or("").to_string(),
+            request.query().get("from").unwrap_or("0").to_string().parse::<i32>().unwrap_or(0).clone(),
+            request.query().get("size").unwrap_or("10").to_string().parse::<i32>().unwrap_or(0).clone()
+        );
+
         serde_json::to_string(
             &ApiInvoices::new(
-                &InvoiceService::all_invoices()
+                &InvoiceService::all_invoices(&list_context)
             )
         ).expect("serialize api invoices")
     });
@@ -223,7 +228,7 @@ fn main() {
 
         serde_json::to_string(
             &ApiCustomers::new(
-                &SuggestService::getCustomerCompletion(
+                &SuggestService::get_customer_completion(
                     &request.query().get("query").expect("query param on suggestion is missing").to_string()
                 )
             )

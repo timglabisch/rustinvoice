@@ -13,11 +13,11 @@ pub struct ApiCustomers {
 }
 
 impl ApiCustomers {
-    pub fn new(searchResult : &SearchResult<Customer>) -> ApiCustomers {
+    pub fn new(search_result : &SearchResult<Customer>) -> ApiCustomers {
         ApiCustomers {
-            took: searchResult.took,
-            total: searchResult.hits.total,
-            customers: searchResult.hits.hits.iter().map(|s : &SearchResultHit<Customer>| {
+            took: search_result.took,
+            total: search_result.hits.total,
+            customers: search_result.hits.hits.iter().map(|s : &SearchResultHit<Customer>| {
                 ApiCustomer {
                     uuid: s._id.clone(),
                     address: s._source.address.clone()

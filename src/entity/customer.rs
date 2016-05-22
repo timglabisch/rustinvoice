@@ -4,11 +4,3 @@ use super::address::Address;
 pub struct Customer {
     pub address : Address,
 }
-
-impl Customer {
-    pub fn new() -> Self {
-        Customer {
-            address: Address::default()
-        }
-    }
-}

@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = ["timglabisch <tim@ainfach.de>"]
 
 [dependencies]
-nickel = "0.8.0"
+nickel = "0.8.1"
 unicase = "*"
 serde = "^0.7"
 serde_json = "^0.7"

@@ -4,6 +4,7 @@ export default Reflux.createActions([
   "on",
   "off",
   "create_customer",
+  "updated_customer",
   "created_customer",
   "created_customer_failed",
   "require_customers",
@@ -13,6 +14,7 @@ export default Reflux.createActions([
   "update_customer",
 
   "create_invoice",
+  "updated_invoice",
   "created_invoice",
   "created_invoice_failed",
   "require_invoices",

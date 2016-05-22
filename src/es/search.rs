@@ -6,12 +6,6 @@ pub struct SearchResult<T> where T : Clone {
     pub hits : SearchResultHits<T>
 }
 
-impl<T> SearchResult<T> where T : Clone {
-    pub fn get_sources(&self) -> Vec<T> {
-        self.hits.hits.iter().map(|hit : &SearchResultHit<T>| { hit._source.clone() }).collect()
-    }
-}
-
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct SearchResultShards {
     pub total : i32,

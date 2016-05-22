@@ -105,10 +105,100 @@ impl EsMapping {
             }
             "#
         );
+        
+        EsMapping::update(
+            "http://192.168.0.79:9200/rustinvoice/_mapping/invoice",
+            r#"
+            {
+                "properties": {
+	                "items": {
+		                "type": "nested",
+		                "properties": {
+			                "text": {
+                                "type": "multi_field",
+                                "fields" : {
+                                    "analyzed" : {"type" : "string", "index" : "analyzed"},
+                                    "untouched" : {"type" : "string", "analyzer": "keyword"},
+                                    "autocomplete" : {"type" : "string", "analyzer": "basic_autocomplete_analyzer"}
+                                }
+                            },
+                            "cost": {
+                                "type": "integer"
+                            },
+                            "quantity": {
+                                "type": "integer"
+                            }
+		                }
+	                },
+                    "address": {
+                        "type": "nested",
+                        "properties": {
+                            "country": {
+                                "type": "multi_field",
+                                "fields" : {
+                                    "analyzed" : {"type" : "string", "index" : "analyzed"},
+                                    "untouched" : {"type" : "string", "analyzer": "keyword"},
+                                    "autocomplete" : {"type" : "string", "analyzer": "basic_autocomplete_analyzer"}
+                                }
+                            },
+                            "street": {
+                                "type": "multi_field",
+                                "fields" : {
+                                    "analyzed" : {"type" : "string", "index" : "analyzed"},
+                                    "untouched" : {"type" : "string", "analyzer": "keyword"},
+                                    "autocomplete" : {"type" : "string", "analyzer": "basic_autocomplete_analyzer"}
+                                }
+                            },
+                            "street_number": {
+                                "type": "multi_field",
+                                "fields" : {
+                                    "analyzed" : {"type" : "string", "index" : "analyzed"},
+                                    "untouched" : {"type" : "string", "analyzer": "keyword"},
+                                    "autocomplete" : {"type" : "string", "analyzer": "basic_autocomplete_analyzer"}
+                                }
+                            },
+                            "zip": {
+                                "type": "multi_field",
+                                "fields" : {
+                                    "analyzed" : {"type" : "string", "index" : "analyzed"},
+                                    "untouched" : {"type" : "string", "analyzer": "keyword"},
+                                    "autocomplete" : {"type" : "string", "analyzer": "basic_autocomplete_analyzer"}
+                                }
+                            },
+                            "first_name": {
+                                "type" : "multi_field",
+                                "fields" : {
+                                    "analyzed" : {"type" : "string", "index" : "analyzed"},
+                                    "untouched" : {"type" : "string", "analyzer": "keyword"},
+                                    "autocomplete" : {"type" : "string", "analyzer": "basic_autocomplete_analyzer"}
+                                }
+                            },
+                            "last_name": {
+                                "type" : "multi_field",
+                                "fields" : {
+                                    "analyzed" : {"type" : "string", "index" : "analyzed"},
+                                    "untouched" : {"type" : "string", "analyzer": "keyword"},
+                                    "autocomplete" : {"type" : "string", "analyzer": "basic_autocomplete_analyzer"}
+                                }
+                            },
+                            "company_name": {
+                                "type" : "multi_field",
+                                "fields" : {
+                                    "analyzed" : {"type" : "string", "index" : "analyzed"},
+                                    "untouched" : {"type" : "string", "analyzer": "keyword"},
+                                    "autocomplete" : {"type" : "string", "analyzer": "basic_autocomplete_analyzer"}
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            "#
+        );
     }
 
     fn post(url : &str) {
-        let res = Client::new()
+        Client::new()
             .post(url)
             .send()
             .expect("could not update mapping.")

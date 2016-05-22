@@ -9,7 +9,6 @@ use es::create::CreateResult;
 use std::io::Read;
 use dto::ListContext;
 use serde_json::builder::ObjectBuilder;
-use serde::ser;
 
 
 impl CustomerService {
@@ -17,8 +16,8 @@ impl CustomerService {
     pub fn update_customer(uuid : &String, customer : &Customer) {
         let data = serde_json::to_string(customer).expect("serialize customer to string");
 
-        let mut res = Client::new()
-            .post(&(format!("http://192.168.0.79:9200/rustinvoice/customer/{}", uuid)).to_string())
+        Client::new()
+            .post(&(format!("http://192.168.0.79:9200/rustinvoice/customer/{}?refresh=true", uuid)).to_string())
             .body(&data)
             .send()
             .expect("sending update to elastic");
@@ -28,7 +27,7 @@ impl CustomerService {
         let data = serde_json::to_string(customer).expect("serialize customer to string");
 
         let mut res = Client::new()
-            .post("http://192.168.0.79:9200/rustinvoice/customer")
+            .post("http://192.168.0.79:9200/rustinvoice/customer?refresh=true")
             .body(&data)
             .send()
             .expect("sending post to elastic");

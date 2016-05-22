@@ -1,6 +1,5 @@
 use entity::address::Address;
 use std::default::Default;
-use serde;
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone)]
 pub struct Invoices {
