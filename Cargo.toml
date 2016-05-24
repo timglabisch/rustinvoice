@@ -9,6 +9,7 @@ unicase = "*"
 serde = "^0.7"
 serde_json = "^0.7"
 serde_macros = "^0.7"
+xml-rs = "0.3"
 
 [dependencies.hyper]
 version = "=0.8"

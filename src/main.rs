@@ -7,6 +7,7 @@ extern crate serde_json;
 #[macro_use] extern crate nickel;
 #[macro_use] extern crate hyper;
 extern crate unicase;
+extern crate xml;
 
 use std::collections::HashMap;
 use nickel::{Nickel, HttpRouter, MediaType, QueryString};
@@ -24,6 +25,7 @@ mod es;
 mod api;
 mod dto;
 mod mapping;
+mod pdf;
 use api::customers::ApiCustomers;
 use api::customers::ApiCustomer;
 use api::invoices::ApiInvoice;
@@ -32,10 +34,15 @@ use api::ApiCreated;
 use hyper::method::Method;
 use mapping::EsMapping;
 use dto::ListContext;
+use pdf::PdfGenerator;
 
 fn main() {
 
-    EsMapping::update_invoice();
+    let pdf_generator = PdfGenerator::new();
+	pdf_generator.foo();
+	
+	EsMapping::update_invoice();
+    
 
     let mut server = Nickel::new();
 
