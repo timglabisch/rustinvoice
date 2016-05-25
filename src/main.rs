@@ -39,7 +39,9 @@ use pdf::PdfGenerator;
 fn main() {
 
     let pdf_generator = PdfGenerator::new();
-	pdf_generator.foo();
+	pdf_generator.write_invoice_xml(&Invoice::default());
+	
+	return;
 	
 	EsMapping::update_invoice();
     
