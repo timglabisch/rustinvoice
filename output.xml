@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<invoice>
+  <style>
+    <overlays>
+      <overlay identifier="first" file="overlay_example.pdf" />
+      <overlay page="2" file="overlay_example.pdf" />
+      <overlay page="3" file="overlay_example.pdf" />
+    </overlays>
+  </style>
+  <address>
+    <headlines>
+      <headline><![CDATA[Firma]]></headline>
+    </headlines>
+    <contents>
+      <content><![CDATA[Content!]]></content>
+    </contents>
+  </address>
+  <project_information>
+    <project_nr><![CDATA[ProjektNR]]></project_nr>
+    <invoice_nr><![CDATA[RechnungsNR]]></invoice_nr>
+    <date><![CDATA[10.11.1990]]></date>
+  </project_information>
+  <items>
+    <item count="2" price="2324">
+      <description><![CDATA[Description]]></description>
+    </item>
+  </items>
+</invoice>

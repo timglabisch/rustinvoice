@@ -8,10 +8,12 @@ extern crate serde_json;
 #[macro_use] extern crate hyper;
 extern crate unicase;
 extern crate xml;
+extern crate cp437;
 
 use std::collections::HashMap;
 use nickel::{Nickel, HttpRouter, MediaType, QueryString};
 mod entity;
+mod format;
 use entity::customer::Customer;
 use entity::invoice::Invoice;
 use hyper::header::{AccessControlAllowOrigin, AccessControlAllowHeaders, AccessControlAllowMethods};
@@ -35,12 +37,17 @@ use hyper::method::Method;
 use mapping::EsMapping;
 use dto::ListContext;
 use pdf::PdfGenerator;
+use format::pro;
 
 fn main() {
 
+	let a = pro::convert();
+
+
+/*
     let pdf_generator = PdfGenerator::new();
 	pdf_generator.write_invoice_xml(&Invoice::default());
-	
+	*/
 	return;
 	
 	EsMapping::update_invoice();

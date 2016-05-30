@@ -5,6 +5,7 @@ import Customer from './modules/Customer'
 import Invoice from './modules/Invoice'
 import Invoices from './modules/Invoices'
 import Customers from './modules/Customers'
+import Import from './modules/Import'
 import { Router, Route, hashHistory, Link } from 'react-router'
 
 render((
@@ -17,6 +18,7 @@ render((
          <Route path="/invoices" component={Invoices}/>
          <Route path="/invoice" component={Invoice}/>
          <Route path="/invoice/:uuid" component={Invoice}/>
+         <Route path="/import" component={Import}/>
        </Route>
      </Router>
   </div>

@@ -10,6 +10,7 @@ serde = "^0.7"
 serde_json = "^0.7"
 serde_macros = "^0.7"
 xml-rs = "0.3"
+cp437 = "*"
 
 [dependencies.hyper]
 version = "=0.8"
