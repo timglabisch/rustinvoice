@@ -11,6 +11,9 @@ serde_json = "^0.7"
 serde_macros = "^0.7"
 xml-rs = "0.3"
 cp437 = "*"
+plugin = "0.2"
+typemap = "*"
+rustc-serialize = "0.3"
 
 [dependencies.hyper]
 version = "=0.8"

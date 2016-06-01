@@ -9,9 +9,13 @@ extern crate serde_json;
 extern crate unicase;
 extern crate xml;
 extern crate cp437;
+extern crate plugin;
+extern crate typemap;
+extern crate rustc_serialize;
+
 
 use std::collections::HashMap;
-use nickel::{Nickel, HttpRouter, MediaType, QueryString};
+use nickel::{Nickel, HttpRouter, MediaType, QueryString, FormBody};
 mod entity;
 mod format;
 use entity::customer::Customer;
@@ -28,6 +32,7 @@ mod api;
 mod dto;
 mod mapping;
 mod pdf;
+mod nickelplugin;
 use api::customers::ApiCustomers;
 use api::customers::ApiCustomer;
 use api::invoices::ApiInvoice;
@@ -38,17 +43,20 @@ use mapping::EsMapping;
 use dto::ListContext;
 use pdf::PdfGenerator;
 use format::pro;
+use nickelplugin::ByteReader;
+use plugin::Pluggable;
+use rustc_serialize::base64::FromBase64;
 
 fn main() {
 
+
+	/*
 	let a = pro::convert();
-
-
-/*
     let pdf_generator = PdfGenerator::new();
 	pdf_generator.write_invoice_xml(&Invoice::default());
-	*/
+	
 	return;
+	*/
 	
 	EsMapping::update_invoice();
     
@@ -57,9 +65,6 @@ fn main() {
 
     server.options("**", middleware! { |_, mut response|
         response.headers_mut().set(AccessControlAllowOrigin::Any);
-        response.headers_mut().set(AccessControlAllowHeaders(vec![
-            UniCase("Content-Type".to_string())
-        ]));
         response.headers_mut().set(AccessControlAllowHeaders(vec![
             UniCase("Content-Type".to_string())
         ]));
@@ -237,6 +242,27 @@ fn main() {
 
         ""
     });
+
+	server.post("/import/upload", middleware! { |request, mut response|
+        response.headers_mut().set(AccessControlAllowOrigin::Any);
+        response.headers_mut().set(AccessControlAllowHeaders(vec![
+            UniCase("Content-Type".to_string())
+        ]));
+        response.headers_mut().set(AccessControlAllowMethods(vec![
+            Method::Get,
+            Method::Post,
+            Method::Delete,
+            Method::Put
+        ]));
+        
+        
+        let res = request.get_ref::<ByteReader>().unwrap();
+        let bytes = res.from_base64().expect("bytes baby");
+        
+        pro::convert(&mut bytes.bytes());
+    
+		"{}"
+	});
 
     server.get("/suggest", middleware! { |request, mut response|
         response.set(MediaType::Json);

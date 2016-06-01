@@ -2,12 +2,11 @@ use std::io;
 use std::io::prelude::*;
 use std::fs::File;
 use cp437::Reader;
+use std::io::Bytes;
 
 
-pub fn convert() {
-	let mut f = File::open("/Users/tim/Downloads/hws2/HWS/MICU41.PRO").unwrap();
-	let mut bytes = f.bytes();
-	let mut r = Reader::new(&mut bytes);
+pub fn convert<T : Read>(bytes : &mut Bytes<T>) {
+	let mut r = Reader::new(bytes);
 	
 	println!("Kurzname {}", r.consume(12)); // Kurzname
 	println!("Projekt {}", r.consume(12)); // Projekt

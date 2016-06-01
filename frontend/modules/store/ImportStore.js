@@ -42,8 +42,7 @@ export default Reflux.createStore({
 
     uploadFile: function(fileInfo) {
         var xhr = new XMLHttpRequest();
-        xhr.open("POST", '/import/upload', true);
-        xhr.setRequestHeader("X_FILENAME", fileInfo.entry.name);
+        xhr.open("POST", 'http://127.0.0.1:6767/import/upload', true);
         xhr.onreadystatechange = function() {
 
             this.update(fileInfo.id, {
@@ -53,7 +52,7 @@ export default Reflux.createStore({
             this.trigger();
 
         }.bind(this);
-        xhr.send(fileInfo.content);
+        xhr.send(fileInfo.content.split(',')[1]);
     },
 
     update: function(id, data) {

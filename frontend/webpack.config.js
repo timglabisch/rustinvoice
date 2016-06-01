@@ -8,7 +8,7 @@ module.exports = {
   },
 
   devServer: {
-   headers: { "Access-Control-Allow-Origin": "*" }
+   headers: { "Access-Control-Allow-Origin": "http://127.0.0.1:6767", "Access-Control-Allow-Credentials": "true" }
  },
 
   module: {
