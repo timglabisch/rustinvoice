@@ -79,6 +79,11 @@ export default React.createClass({
   },
 
   handleItemChange(field, index, e) {
+
+    if (field == 'cost' || field == 'quantity') {
+      e.target.value = Number(e.target.value);
+    }
+
     this.state.invoice.items[index][field] = e.target.value;
 
     if (this.state.invoice.items.length == index + 1) {

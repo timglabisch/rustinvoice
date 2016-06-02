@@ -8,6 +8,19 @@ pub struct Invoices {
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone)]
 pub struct Invoice {
+	#[serde(default)]
+	pub short_name : String,
+	#[serde(default)]
+	pub project : String,
+	#[serde(default)]
+	pub shortcut : String,
+	#[serde(default)]
+	pub info : String,
+	#[serde(default)]
+	pub date : String,
+	#[serde(default)]
+	pub description : String,
+	
     pub address : Address,
     pub items : Vec<InvoiceItem>
 }

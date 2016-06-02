@@ -4,9 +4,9 @@ import InvoiceItem from './InvoiceItem'
 export default class {
 
   constructor(
-    number = null,
+    number = "",
     address = new Address(),
-    date = null,
+    date = "",
     items = [ new InvoiceItem()]
   ) {
     this.number = number;

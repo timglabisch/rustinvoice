@@ -259,7 +259,14 @@ fn main() {
         let res = request.get_ref::<ByteReader>().unwrap();
         let bytes = res.from_base64().expect("bytes baby");
         
-        pro::convert(&mut bytes.bytes());
+        let pro = pro::convert(&mut bytes.bytes());
+    
+	    InvoiceService::update_invoice(
+            &pro.projekt,
+            &pro.to_invoice()
+        );
+    
+	    println!("{:?}", &pro.to_invoice());
     
 		"{}"
 	});

@@ -1,10 +1,10 @@
 #[derive(Serialize, Deserialize, Default, Debug, Clone)]
 pub struct Address {
-    country : String,
-    street : String,
-    street_number : String,
-    zip : String,
-    first_name : String,
-    last_name : String,
-    company_name : String
+    pub country : String,
+    pub street : String,
+    pub street_number : String,
+    pub zip : String,
+    pub first_name : String,
+    pub last_name : String,
+    pub company_name : String
 }
