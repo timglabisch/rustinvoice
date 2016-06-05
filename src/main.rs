@@ -15,7 +15,7 @@ extern crate rustc_serialize;
 
 
 use std::collections::HashMap;
-use nickel::{Nickel, HttpRouter, MediaType, QueryString, FormBody};
+use nickel::{Nickel, HttpRouter, MediaType, QueryString, FormBody, MiddlewareResult};
 mod entity;
 mod format;
 use entity::customer::Customer;
@@ -46,18 +46,10 @@ use format::pro;
 use nickelplugin::ByteReader;
 use plugin::Pluggable;
 use rustc_serialize::base64::FromBase64;
+use std::path::Path;
 
 fn main() {
 
-
-	/*
-	let a = pro::convert();
-    let pdf_generator = PdfGenerator::new();
-	pdf_generator.write_invoice_xml(&Invoice::default());
-	
-	return;
-	*/
-	
 	EsMapping::update_invoice();
     
 
@@ -284,6 +276,26 @@ fn main() {
         ).expect("serialize customers")
     });
 
+	server.get("/export/pdf/:uuid", middleware! { |request, response|
+		
+		let invoice_id_result = InvoiceService::get_by_id(
+            &request.param("uuid").expect("get without uuid").to_string()
+        );
+		
+		let pdf_generator = PdfGenerator::new();
+		pdf_generator.write_invoice_xml(&invoice_id_result._id, &invoice_id_result._source);
+		
+		return response.send_file(&Path::new(&format!("/tmp/rustinvoice_invoice_{}.pdf", &invoice_id_result._id)));
+	});
+	
+	/*fn foo_result<'a,D>(req: &mut nickel::Request,
+                    res: nickel::Response<'a,D>)
+                    -> MiddlewareResult<'a,D> {
+	  
+	  res.send_file(&Path::new("/tmp/rustinvoice_invoice.xml"))
+	}
+                    
+    server.get("/foo", foo_result);*/
 
     server.listen("127.0.0.1:6767");
 }

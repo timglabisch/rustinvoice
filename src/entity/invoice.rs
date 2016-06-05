@@ -8,6 +8,7 @@ pub struct Invoices {
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone)]
 pub struct Invoice {
+	
 	#[serde(default)]
 	pub short_name : String,
 	#[serde(default)]

@@ -212,6 +212,17 @@ export default React.createClass({
             <div>
               <form>
 
+                { this.state.invoice.uuid &&
+                <a
+                    type="button"
+                    className="btn btn-success"
+                    style={{position:"absolute", right: "40px"}}
+                    href={"http://127.0.0.1:6767/export/pdf/" + this.state.invoice.uuid }
+                >
+                  PDF
+                </a>
+                }
+
                 <h3>Rechnung / Angebot</h3>
 
                 <div className="form-group">
